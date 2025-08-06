@@ -1,0 +1,212 @@
+sampleID	alanine_0	arginine_0	asparagine_0	aspartic_acid_0	citrulline_0	glutamic_acid_0	glutamine_0	glycine_0	histidine_0	hydroxyproline_0	isoleucine_0	leucine_0	lysine_0	methionine_0	ornithine_0	phenylalanine_0	proline_0	serine_0	taurine_0	threonine_0	trytophan_0	tyrosine_0	valine_0	alanine_52	arginine_52	asparagine_52	aspartic_acid_52	citrulline_52	glutamic_acid_52	glutamine_52	glycine_52	histidine_52	hydroxyproline_52	isoleucine_52	leucine_52	lysine_52	methionine_52	ornithine_52	phenylalanine_52	proline_52	serine_52	taurine_52	threonine_52	trytophan_52	tyrosine_52	valine_52
+LCC1001	I	E	G	I	K	J	C	G	F	C	C	E	E	D	I	H	B	G	I	D	E	J	H	L	B	B	E	H	I	C	K	G	G	A	C	B	B	C	D	D	A	D	B	C	G	B
+LCC1002	I	I	P	F	J	K	M	J	I	D	G	I	K	G	P	E	G	R	G	M	I	F	H	K	I	L	J	O	N	P	K	J	G	E	F	G	H	S	D	I	P	F	J	I	F	E
+LCC1003	L	G	M	G	K	G	G	M	K	D	G	H	H	H	I	G	G	P	F	N	O	I	I	N	F	H	L	I	K	H	V	J	I	E	F	B	D	H	F	L	I	E	F	K	I	E
+LCC1004	D	G	L	H	P	K	K	J	H	D	K	L	E	E	H	G	E	K	G	G	F	H	K	E	E	H	R	L	S	G	D	G	C	F	G	E	C	E	F	K	D	F	A	C	F	E
+LCC1005	R	H	Q	H	O	L	J	O	Q	H	K	M	H	L	M	M	U	Q	H	W	N	M	M	B	D	A	A	I	A	D	D	J	F	F	H	B	B	B	E	E	A	C	C	G	G	G
+LCC1006	F	C	H	H	H	F	F	H	H	D	B	B	F	D	F	E	A	I	G	G	I	D	E	L	P	V	R	R	L	N	T	T	O	J	J	J	H	L	J	H	M	E	P	P	M	K
+LCC1007	L	K	F	D	M	K	H	R	I	B	K	M	L	E	L	I	H	G	E	J	L	H	P	H	F	F	M	L	M	M	K	I	H	E	E	D	C	B	D	J	E	C	E	K	E	D
+LCC1008	F	B	G	B	A	F	K	C	I	B	F	F	C	C	C	C	E	I	F	I	J	C	D	F	D	G	H	G	M	I	F	I	G	D	F	D	C	F	D	D	E	C	C	G	C	D
+LCC1009	D	I	J	H	G	I	L	D	H	B	D	E	I	D	J	H	M	N	G	D	E	D	D	K	V	U	P	L	S	O	U	R	H	M	L	P	N	R	G	V	U	D	Q	R	L	M
+LCC1010	G	D	L	G	I	G	J	F	H	C	G	H	D	E	H	J	I	L	E	I	L	L	G	C	F	H	I	H	J	N	L	J	G	E	E	B	B	C	E	J	G	E	E	E	G	C
+LCC1011	D	D	E	E	F	G	H	C	D	A	D	E	G	G	G	B	C	J	F	D	E	A	D	I	N	G	F	O	K	Q	H	J	B	E	E	G	L	I	A	N	H	B	A	J	B	B
+LCC1012	J	C	I	I	G	N	F	G	I	C	D	F	L	F	K	F	D	I	E	J	J	G	G	L	N	Q	M	N	N	L	S	Q	O	M	P	N	L	T	I	P	J	C	O	R	J	P
+LCC1014	E	L	J	B	N	C	K	F	N	G	J	K	H	F	L	G	F	K	G	M	O	K	K	R	O	V	Q	Z	N	P	S	Z	T	K	L	N	N	Z	G	S	N	E	Z	S	S	N
+LCC1015	D	I	J	A	K	F	L	H	J	E	G	I	J	E	K	F	C	M	E	K	G	I	H	F	I	M	J	O	L	M	G	M	L	E	F	I	E	P	F	E	I	H	H	M	J	G
+LCC1016	K	H	L	H	G	K	N	J	M	D	I	I	H	G	M	H	I	O	E	K	L	J	I	N	O	K	I	J	N	R	S	J	E	F	F	I	G	G	D	I	M	C	I	C	J	E
+LCC1017	G	I	P	E	M	H	P	H	L	C	I	J	I	G	F	I	I	Q	F	P	P	K	L	M	O	R	G	R	J	Q	L	V	I	P	R	K	M	H	K	P	N	E	R	R	Z	Q
+LCC1019	K	I	N	I	D	K	M	H	H	C	E	F	H	G	F	F	I	O	I	F	K	F	E	J	J	K	J	M	J	M	K	Q	J	G	I	D	G	E	F	H	I	C	J	M	I	G
+LCC1020	L	F	P	G	H	J	N	K	I	C	E	E	I	F	H	D	J	S	G	J	N	E	F	G	G	E	J	P	J	K	O	K	F	D	E	D	D	H	F	H	H	E	F	O	H	D
+LCC1021	N	Z	Y	A	O	E	I	Z	N	Z	J	J	R	J	Z	I	V	U	F	O	D	E	O	J	H	I	J	L	P	L	G	O	F	I	J	F	F	F	H	Q	G	G	D	I	J	G
+LCC1022	F	C	T	J	B	J	L	H	F	C	I	K	J	H	G	G	G	W	O	N	F	J	J	A	F	I	A	F	D	J	B	H	D	F	G	C	E	B	I	D	F	D	C	H	H	E
+LCC1023	H	G	R	F	H	J	J	I	E	B	M	O	L	G	J	D	I	O	F	Q	H	E	K	G	F	U	D	G	G	I	P	I	E	C	C	E	C	D	D	S	E	B	F	G	C	D
+LCC1024	E	G	K	F	F	O	J	F	E	D	N	N	L	C	J	C	K	P	E	I	B	D	L	F	L	K	D	G	K	I	O	F	E	E	G	H	A	H	C	H	K	B	G	E	D	F
+LCC1025	H	K	N	H	K	L	Q	H	J	D	G	G	N	E	L	D	J	O	F	J	G	F	E																							
+LCC1026	D	F	G	F	K	G	G	E	G	B	F	G	J	F	E	F	C	K	D	F	G	I	F	D	D	C	Q	F	I	I	E	G	C	D	D	A	B	B	F	E	C	C	A	O	G	C
+LCC1027	F	C	H	H	E	W	H	E	E	C	K	L	K	G	J	E	B	M	F	H	J	D	I	G	I	K	K	E	P	O	F	M	D	H	I	G	G	G	I	S	G	F	G	G	J	I
+LCC1028	E	D	H	D	F	G	K	G	G	B	I	J	G	C	L	C	D	S	B	Q	G	F	I	J	E	H	E	F	G	K	K	H	B	J	K	F	E	J	D	H	N	B	N	E	G	J
+LCC1029	J	C	J	I	Q	M	G	F	H	C	G	J	D	D	L	H	L	K	F	H	J	G	I	A	G	A	N	M	N	A	F	E	F	D	F	E	B	E	E	A	C	C	D	K	G	F
+LCC1030	D	B	J	F	D	H	G	E	F	A	E	E	E	D	D	H	C	I	D	D	E	E	E	O	G	K	H	G	I	F	K	G	H	G	H	H	H	A	F	F	C	C	G	N	N	G
+LCC1031	J	I	M	F	O	H	L	H	J	E	F	E	C	F	G	H	I	P	E	H	G	H	F	E	L	F	I	S	H	K	M	N	J	D	D	C	F	H	E	H	H	F	H	K	H	D
+LCC1033	K	G	M	C	E	H	L	K	I	E	D	D	G	H	K	G	G	P	N	O	N	H	G	K	I	I	C	D	H	T	I	O	J	D	E	F	G	E	E	K	K	E	I	H	I	D
+LCC1034	E	H	I	E	M	H	C	G	F	C	F	G	I	C	L	G	F	H	E	I	I	H	J	L	R	Z	J	O	J	M	Z	P	Q	I	G	H	D	N	I	Q	I	D	P	K	Q	J
+LCC1037	E	D	O	O	F	I	I	F	E	B	E	G	I	D	I	F	C	J	J	J	J	E	F	A	B	F	D	D	E	I	A	G	A	D	E	B	A	A	B	C	A	A	A	F	A	C
+LCC1038	H	G	I	Y	I	G	G	I	E	C	F	F	C	E	H	D	F	K	I	F	J	E	H	K	J	G	E	K	F	J	O	I	H	E	F	D	F	E	D	F	F	A	E	G	J	E
+LCC1039	F	G	N	I	E	G	G	N	I	C	E	F	I	E	J	G	C	O	F	J	H	J	G	L	J	I	C	G	I	L	Y	L	I	C	D	F	D	H	D	J	L	D	F	H	I	D
+LCC1040	H	I	M	H	G	N	L	H	J	B	H	J	P	D	P	E	F	P	E	H	F	H	G	G	E	J	J	I	M	O	J	J	F	H	I	F	D	C	D	L	E	C	A	I	E	F
+LCC1042	G	I	J	C	E	J	M	I	K	D	Q	S	H	I	L	M	H	M	F	O	R	R	T	Q	O	T	P	D	M	T	Q	W	I	L	L	G	K	C	J	K	L	Z	K	O	R	L
+LCC1043	D	F	L	G	B	F	N	F	J	C	H	I	J	F	F	E	O	O	F	J	K	G	H	K	I	I	J	J	J	N	H	N	J	F	F	G	G	J	E	Z	F	E	H	L	J	F
+LCC1044	E	F	K	H	H	K	J	K	I	E	F	F	E	E	E	E	D	Q	G	I	G	H	E	A	H	H	H	G	H	H	E	I	F	K	L	C	H	E	J	D	G	D	E	K	M	K
+LCC1045	G	F	O	H	G	L	P	N	H	E	C	D	E	E	H	C	I	N	J	F	D	E	C	D	H	K	J	J	N	R	I	J	F	E	H	D	F	H	F	J	J	F	F	G	L	E
+LCC1046	C	C	G	D	D	D	F	H	F	E	B	E	A	C	A	I	A	L	G	E	I	G	E	O	K	L	G	K	J	L	R	L	I	F	G	E	F	I	F	J	M	D	M	L	J	F
+LCC1047	J	G	L	E	G	F	J	I	G	D	D	D	H	B	I	E	I	L	C	H	E	D	F	S	K	P	K	I	M	I	P	L	D	J	J	I	F	I	H	V	I	A	L	N	K	J
+LCC1049	E	L	P	H	K	J	M	G	I	D	E	E	H	G	I	F	F	P	F	H	K	K	F	E	D	D	J	Q	M	H	H	F	K	C	F	D	C	F	D	E	E	D	C	J	E	D
+LCC1050	G	F	I	D	K	F	H	F	E	B	E	C	E	D	D	G	I	H	D	E	I	E	E	K	F	I	K	V	K	G	J	G	E	A	A	C	B	E	D	D	C	F	A	A	D	A
+LCC1051	F	C	G	I	L	K	G	H	H	D	D	D	F	D	J	E	D	K	F	G	I	H	F	G	G	H	L	I	K	H	P	G	F	G	H	F	F	D	E	G	G	C	F	I	F	I
+LCC1052	D	D	E	G	G	G	H	D	G	B	F	J	H	D	J	J	A	K	E	F	G	G	I	I	J	G	F	K	E	Q	J	G	D	F	F	D	D	F	C	D	L	B	I	G	H	H
+LCC1055	G	D	K	S	D	Y	M	J	J	C	J	J	H	F	J	E	J	O	P	K	H	G	J	I	L	M	C	G	H	U	P	Q	K	H	I	F	G	F	E	K	N	F	D	O	K	F
+LCC1057	E	E	L	F	Z	G	H	E	L	C	O	T	K	M	F	P	J	J	E	O	L	R	U	D	C	L	H	N	K	L	C	Q	G	Q	T	F	I	B	L	O	F	F	G	M	P	W
+LCC1058	G	G	L	D	E	G	M	K	G	G	H	H	M	F	I	C	E	R	H	L	G	F	H	Z	M	W	J	K	L	Q	X	N	R	L	M	R	R	U	G	N	N	D	O	M	N	K
+LCC1060	G	M	J	B	I	E	M	I	J	D	D	E	H	G	E	H	D	N	F	L	O	L	F	H	N	N	H	J	N	K	N	L	I	I	K	L	H	M	E	G	O	D	O	M	O	J
+LCC1061	H	E	L	H	G	M	P	I	F	D	F	D	E	E	D	D	H	O	G	I	J	G	E	K	E	G	G	I	I	N	U	G	Q	D	E	E	E	F	D	J	J	E	H	J	G	E
+LCC1062	I	E	J	K	J	L	K	J	E	C	E	E	C	F	E	G	M	K	G	F	H	F	E	F	F	F	I	M	I	C	I	D	H	E	G	D	E	D	F	F	D	C	F	L	F	G
+LCC1063	K	K	O	E	K	I	J	J	J	E	E	G	J	E	K	D	D	J	E	I	H	F	G	K	J	O	K	M	M	L	J	L	J	H	I	E	E	D	G	H	H	E	F	I	G	G
+LCC1064	D	H	P	E	K	D	J	G	L	C	F	G	F	H	C	H	C	M	H	L	J	H	F	D	M	I	I	M	K	K	I	N	H	K	L	H	H	F	J	I	G	E	F	T	M	J
+LCC1065	H	D	K	X	H	R	I	G	G	D	E	G	H	E	H	D	D	M	P	G	J	E	D	D	F	H	G	M	I	J	P	O	I	D	E	B	E	C	F	H	F	F	E	M	L	E
+LCC1066	H	H	U	Z	D	P	O	I	U	G	K	N	K	K	E	L	J	U	S	N	R	N	H	I	F	H	H	A	K	K	M	J	E	D	D	G	D	A	B	I	H	A	D	H	H	A
+LCC1067	G	F	M	J	C	I	G	L	I	D	H	H	G	F	E	G	H	L	F	K	K	F	G	H	L	I	E	J	H	J	P	I	I	E	F	F	F	G	E	C	K	D	L	N	H	F
+LCC1068	A	A	A	D	B	D	A	A	C	B	A	A	A	A	A	G	A	A	F	A	F	D	A	C	F	F	E	J	G	K	H	P	O	C	E	B	C	B	F	H	A	G	D	J	K	C
+LCC1069	Z	M	V	L	N	W	N	O	Q	C	N	Q	O	K	Q	L	X	W	G	R	J	K	O	N	J	K	W	M	Z	J	K	O	H	M	N	J	G	P	I	R	M	D	M	L	P	M
+LCC1070	G	J	P	B	Q	A	G	Q	I	A	D	C	H	E	I	I	P	P	E	K	H	C	G	F	E	E	H	G	R	K	H	G	E	D	E	D	C	B	D	R	E	B	B	D	E	B
+LCC1072	G	I	O	F	H	I	J	H	H	C	J	K	I	F	M	G	E	N	E	L	P	G	J	K	D	K	O	D	L	R	O	L	G	E	E	F	D	F	D	J	H	D	C	D	D	C
+LCC1073	J	F	X	Y	B	O	Z	I	P	F	L	N	H	I	G	H	L	Z	Z	P	P	K	K	J	H	K	J	M	H	O	N	K	I	H	I	I	H	K	F	K	L	D	I	L	K	H
+LCC1074	I	F	M	U	H	M	M	I	H	C	E	D	F	G	G	D	C	O	L	G	K	F	F	M	E	J	P	E	S	Q	L	I	G	G	H	E	F	D	E	L	K	E	H	F	I	F
+LCC1075	H	G	L	G	F	J	M	I	K	D	E	F	J	F	K	D	D	T	F	I	K	H	E	E	K	F	D	M	L	J	H	S	F	F	H	G	F	J	H	E	G	F	D	O	H	G
+LCC1076																								U	F	I	P	E	Q	J	N	N	F	C	C	H	C	A	C	F	K	B	D	G	F	C
+LCC1077																								D	H	I	N	H	U	O	I	P	I	F	G	C	E	F	E	E	J	C	K	J	N	E
+LCC1079	G	C	I	F	D	E	G	H	D	B	D	C	C	B	D	C	F	J	B	C	E	B	D	L	E	D	D	G	I	H	L	F	G	F	F	A	B	C	E	O	E	B	C	F	D	D
+LCC1080	G	E	H	F	G	G	I	D	G	B	G	I	J	F	I	G	G	K	C	F	K	G	F	K	G	J	L	N	P	O	G	K	G	K	K	I	K	I	F	W	G	B	F	F	K	L
+LCC1082	F	N	N	H	J	V	I	N	N	C	J	M	L	G	K	I	D	U	H	R	T	R	M	E	J	H	H	L	N	P	N	M	K	E	F	E	D	C	F	E	J	D	C	L	J	F
+LCC1083	I	H	O	J	N	Q	O	I	M	E	H	J	H	G	M	G	C	V	G	K	Q	I	H	C	E	G	K	K	M	L	L	O	H	G	K	C	D	D	K	C	F	H	B	N	I	H
+LCC1084	G	F	L	J	G	I	J	G	F	C	I	I	F	F	K	G	R	R	D	N	G	G	H	D	G	F	E	G	C	M	K	M	G	F	F	B	D	B	E	X	H	D	E	H	F	E
+LCC1086	F	G	H	F	F	N	N	F	I	C	H	I	L	E	I	E	C	O	D	I	F	G	G	O	G	I	D	L	L	K	I	L	I	I	J	J	J	H	F	G	J	B	J	L	L	I
+LCC1087	G	R	U	J	Q	J	J	G	R	E	Z	Z	N	Z	M	Q	M	S	H	R	Y	Z	X	H	K	G	J	H	J	L	K	M	H	H	I	F	F	G	G	O	I	G	E	O	J	F
+LCC1088	G	E	R	H	D	H	O	I	I	D	H	I	F	I	E	H	J	X	E	P	I	H	I	J	E	L	L	G	M	Q	M	K	K	F	G	C	E	D	G	R	L	D	F	I	I	D
+LCC1089	J	G	S	G	H	K	U	J	H	C	C	C	E	I	K	F	N	R	E	E	H	G	C	E	I	E	F	I	F	M	D	C	D	E	E	E	D	K	D	J	D	B	C	H	G	B
+LCC1090	C	F	D	E	O	F	G	F	F	C	E	E	F	D	G	E	A	H	D	E	H	E	F	E	I	D	Q	V	N	N	V	S	Z	F	G	D	E	G	G	J	H	C	B	M	I	G
+LCC1091	C	H	L	L	G	P	L	E	M	C	G	H	I	F	N	G	K	K	G	K	C	F	G	F	J	K	Y	K	U	R	H	T	I	I	J	D	F	I	I	P	J	T	F	L	K	F
+LCC1092	D	J	P	Q	D	P	P	F	V	F	O	S	E	J	D	N	H	Q	P	N	Q	S	O	F	J	I	J	H	J	H	G	N	G	H	J	G	E	F	I	D	F	D	F	N	M	H
+LCC1093	C	E	F	E	D	F	H	B	E	A	F	G	G	C	M	E	D	H	D	F	D	C	F	D	H	C	I	J	N	F	A	C	B	F	G	D	B	I	F	H	C	C	C	H	G	E
+LCC1094	G	F	J	E	I	D	G	E	H	B	G	I	H	F	J	J	B	I	F	E	K	I	L	R	H	L	K	K	P	K	K	I	G	K	L	H	H	M	G	P	H	C	H	K	N	K
+LCC1095	K	G	J	H	L	R	J	I	J	D	H	H	G	F	P	F	G	J	F	H	L	F	I	H	I	E	T	L	R	G	G	K	E	K	J	J	L	K	F	B	F	C	F	M	L	O
+LCC1096	D	E	E	E	E	H	J	G	D	B	D	F	E	A	D	D	F	I	F	I	I	E	F	F	I	C	O	J	N	H	O	G	M	D	E	F	A	F	C	G	H	D	H	J	F	D
+LCC1097	C	E	G	D	K	E	F	F	G	C	F	F	E	B	F	E	B	H	E	G	J	C	H	B	B	C	D	F	F	D	H	E	D	H	I	D	C	B	E	L	E	A	D	I	G	H
+LCC1099	H	F	J	A	J	C	J	J	H	E	D	F	I	G	L	D	D	O	E	L	C	F	G	M	I	F	E	L	M	L	O	H	F	D	E	F	C	K	B	E	I	C	I	J	D	C
+LCC1100	J	J	O	G	H	G	N	F	F	C	F	G	J	E	J	E	K	J	E	I	I	F	F	P	M	Q	Q	S	M	P	K	L	N	H	I	H	H	K	E	J	I	D	G	M	L	F
+LCC1101	G	D	R	E	A	G	E	G	C	B	C	C	G	C	F	E	D	F	A	D	C	B	C	F	G	R	L	N	P	M	F	K	K	K	K	H	D	H	F	O	D	B	D	F	E	M
+LCC1102	E	G	I	J	J	O	I	F	H	C	G	G	K	E	J	D	H	O	E	J	K	F	G	J	O	L	P	K	L	N	O	O	H	K	L	N	J	M	G	T	N	E	L	N	J	I
+LCC1103	J	G	R	I	Q	H	F	H	K	D	N	O	L	O	K	Z	S	M	E	M	Q	Q	Q	G	I	I	J	Q	G	H	R	K	L	H	H	C	J	C	Z	G	D	B	F	Q	O	L
+LCC1104	K	F	G	D	H	I	H	G	E	B	D	F	D	D	K	F	G	K	D	H	H	F	G	I	P	L	O	M	O	L	G	J	E	S	S	N	Q	O	I	E	J	C	J	K	P	S
+LCC1105	H	I	J	D	H	D	J	I	H	D	C	D	G	F	I	E	C	P	F	I	M	I	D	D	J	H	D	L	I	N	Q	K	E	D	F	G	F	H	D	A	K	C	G	Q	I	E
+LCC1106	J	D	U	D	G	B	N	I	J	F	I	K	G	F	L	J	G	J	D	I	Q	J	I	N	A	S	P	J	R	Z	I	L	I	F	G	A	F	C	H	M	I	D	B	M	J	D
+LCC1107																								H	I	G	I	Q	L	H	N	M	S	E	F	G	F	F	F	M	A	A	E	K	F	E
+LCC1109	G	H	K	G	L	N	H	G	H	B	L	M	I	F	K	G	K	K	F	K	I	I	L	J	I	K	P	L	R	D	K	O	F	F	F	F	F	E	F	C	F	D	G	O	K	J
+LCC1112	B	D	E	B	I	B	H	A	H	B	J	K	F	C	E	G	A	F	C	D	E	D	L	N	I	R	M	L	N	K	J	P	I	L	M	M	L	M	I	K	I	B	J	I	K	P
+LCC1113	E	L	K	I	H	I	J	G	J	C	J	K	O	I	J	H	A	K	F	H	I	J	J	H	D	G	Z	E	N	I	Q	H	F	B	C	C	C	D	C	F	J	H	D	I	H	A
+LCC1114	H	I	J	E	R	G	I	H	N	E	I	K	C	D	H	M	G	L	D	I	W	K	J	O	N	J	O	T	O	N	O	R	K	D	F	H	G	F	I	I	I	B	J	M	Q	F
+LCC1115	G	N	L	E	D	H	H	J	I	A	F	H	O	F	I	E	D	P	E	P	N	C	G	J	K	D	G	G	H	J	K	J	H	A	C	F	C	E	B	D	H	C	C	J	E	A
+LCC1116	H	I	N	G	H	N	K	I	L	C	L	N	P	F	J	E	H	P	C	T	K	F	L	H	Q	T	J	K	L	J	S	Q	K	M	N	M	K	N	H	I	O	B	M	O	K	O
+LCC1117	D	L	J	D	D	F	H	F	J	C	G	H	K	D	I	F	E	M	E	I	H	H	I	D	U	Q	D	G	H	I	L	W	K	G	G	I	D	G	J	G	I	C	H	L	O	H
+LCC1118	E	H	J	B	K	C	J	G	L	D	I	K	K	F	F	G	C	K	F	L	M	J	L	D	F	E	E	H	I	K	J	K	J	C	D	B	D	C	F	G	F	E	E	M	J	C
+LCC1119	F	F	N	E	K	G	P	M	N	F	I	H	F	E	G	G	G	Q	F	J	J	J	I	C	C	F	I	M	K	H	S	J	L	F	H	D	D	F	E	E	G	B	E	I	F	G
+LCC1120	D	E	F	F	E	I	G	F	E	C	E	F	H	D	K	D	B	J	E	F	J	E	E	P	I	M	J	J	L	I	Q	O	O	G	G	I	J	I	H	F	G	D	H	Q	J	H
+LCC1121	M	S	V	C	X	C	R	N	P	A	G	H	E	J	K	L	K	O	H	T	O	M	I	C	E	E	N	M	R	J	F	M	J	D	F	C	C	G	D	A	I	H	E	O	I	D
+LCC1122	I	E	J	N	G	R	I	K	D	B	G	G	J	C	H	A	D	N	G	I	F	A	F	H	A	E	P	C	S	K	H	E	A	H	H	E	A	D	A	F	D	C	A	C	A	E
+LCC1123	T	C	P	N	H	Z	N	N	E	D	H	G	E	F	H	F	R	O	C	F	F	E	F	H	G	H	U	F	R	I	P	C	J	D	D	F	A	D	B	L	G	E	E	D	C	C
+LCC1124	J	L	N	A	Z	A	L	J	K	E	M	O	D	I	J	L	J	M	C	R	O	N	M	L	J	F	B	U	F	J	P	N	I	F	H	D	E	G	I	M	D	D	G	J	N	E
+LCC1125	I	K	K	C	F	D	L	G	F	B	F	G	I	E	H	C	G	L	A	F	E	B	H	N	Q	O	L	H	O	S	Q	Q	J	O	N	N	L	L	G	L	M	C	E	H	H	I
+LCC1126	G	G	K	F	I	M	N	I	K	E	K	M	M	F	O	D	G	P	G	M	F	F	K	L	H	H	F	H	J	P	N	K	F	G	G	F	E	G	E	T	I	D	F	B	F	E
+LCC1127	K	J	N	G	J	G	R	R	G	D	F	F	H	E	M	F	H	P	D	G	G	G	E	L	E	E	I	H	J	K	V	D	I	B	C	D	C	J	C	T	I	C	E	M	F	A
+LCC1128	L	L	Q	D	J	D	K	K	I	D	K	M	M	F	M	E	L	P	C	Q	I	F	M	G	E	F	K	G	O	L	F	E	F	E	F	F	B	G	A	M	H	A	F	E	C	D
+LCC1129	P	F	M	C	L	C	I	I	I	F	J	L	G	G	G	G	M	Q	D	L	M	F	I	K	F	H	K	P	M	K	N	R	V	H	I	E	E	G	F	O	G	C	I	M	I	H
+LCC1130	J	M	N	E	G	E	K	K	K	D	I	K	M	H	K	G	D	O	G	L	O	J	I	O	L	M	D	K	F	O	S	P	M	D	E	C	H	C	H	H	I	E	F	Z	K	C
+LCC1131	M	U	P	C	Q	C	Q	H	N	F	H	F	G	H	F	H	I	R	F	K	N	K	H	A	K	L	D	H	H	P	F	W	K	Q	R	D	H	A	J	I	I	H	H	O	L	O
+LCC1132	I	M	S	F	I	L	Q	H	J	E	Q	T	R	J	P	H	N	W	E	U	I	L	P	F	I	G	K	L	H	K	T	G	U	F	G	G	D	G	D	K	I	C	H	F	H	H
+LCC1134	G	G	K	E	A	K	T	F	J	D	J	I	C	E	D	I	I	N	A	I	K	N	H	N	F	J	J	I	O	P	J	Q	N	F	G	B	G	B	G	I	I	E	F	U	J	E
+LCC1136	H	G	J	E	K	G	J	I	J	E	I	K	C	F	H	J	Z	L	C	F	F	H	H	E	C	J	N	F	L	E	P	K	E	D	C	E	A	F	G	G	D	C	A	G	E	B
+LCC1137	G	M	W	F	K	D	Q	M	S	E	H	H	E	K	G	H	G	V	I	P	R	M	G	I	H	K	P	F	J	I	F	J	E	M	N	I	K	Q	G	N	I	C	O	K	Q	M
+LCC1138	I	J	M	B	L	J	J	H	P	D	I	L	M	G	H	L	E	L	D	I	R	L	L	P	J	K	G	N	H	K	W	P	J	E	G	H	G	L	G	M	L	B	I	N	J	G
+LCC1139	H	W	S	M	J	M	O	L	H	B	G	F	M	H	N	F	L	X	I	K	N	F	F	C	M	E	K	I	K	K	H	J	H	F	F	E	G	G	F	E	G	D	D	K	M	E
+LCC1140	D	F	H	E	G	E	M	D	O	F	F	E	D	E	B	N	D	F	H	F	L	G	F	K	J	F	S	O	X	J	J	Q	J	E	G	H	G	H	F	I	E	E	I	J	E	F
+LCC1141	C	E	D	E	F	F	H	G	D	C	I	K	H	B	H	D	C	I	D	G	H	F	I	I	C	I	J	D	H	N	M	F	K	F	F	E	D	D	D	M	H	B	F	E	I	D
+LCC1142	H	K	M	C	I	F	O	I	L	D	H	I	L	H	K	E	H	S	G	X	I	J	I	A	E	C	A	I	H	G	E	N	I	D	F	C	B	E	D	C	E	F	I	J	G	E
+LCC1143	D	I	L	G	F	G	K	H	J	C	I	K	M	F	M	G	D	Q	K	L	P	L	J	C	D	D	H	G	I	I	K	K	F	D	D	D	C	K	C	E	F	E	D	G	G	C
+LCC1144	I	P	M	C	Y	F	I	I	N	E	I	I	G	H	H	L	K	K	D	K	H	L	K	O	G	M	G	M	J	H	P	L	N	D	F	G	E	O	E	G	I	C	I	G	K	F
+LCC1145	I	L	M	B	K	H	J	H	K	C	Q	S	N	S	Q	N	I	S	E	Q	Q	U	Z	L	Z	Z	U	Q	X	N	Z	Z	N	Z	Z	Z	Z	Z	J	S	Z	C	Y	T	U	Z
+LCC1146	K	Q	T	H	S	I	Q	L	M	F	N	N	J	J	M	M	N	T	J	U	M	N	N	M	L	L	M	N	M	L	O	N	Q	K	J	I	I	L	H	U	H	E	K	K	M	J
+LCC1147	M	L	J	E	L	E	E	R	H	A	J	K	L	F	J	H	E	G	E	I	K	G	O	H	H	L	P	K	Q	I	H	J	F	K	M	K	I	M	H	H	I	E	H	N	K	K
+LCC1148	F	G	H	C	K	F	N	I	J	D	E	E	G	E	L	D	D	K	G	H	F	G	F	G	F	E	P	O	O	G	Q	I	L	D	F	H	E	R	D	G	H	E	I	I	I	F
+LCC1149	I	P	Q	F	J	F	L	F	J	C	S	W	W	T	K	M	K	Q	F	P	N	U	Q	H	G	D	N	O	J	G	K	C	G	C	E	D	D	H	D	A	G	C	F	H	L	D
+LCC1150	K	O	M	D	N	D	J	J	G	E	E	D	H	I	I	F	C	O	D	L	R	K	H	D	K	H	I	I	J	K	E	G	H	Q	P	G	K	L	M	E	H	D	G	Q	O	P
+LCC1151	E	H	L	A	O	B	H	H	H	C	M	N	G	G	G	K	I	J	E	I	G	J	N	A	E	K	D	V	H	I	K	O	O	H	J	C	E	C	G	C	F	F	F	J	H	J
+LCC1152	G	I	I	F	Q	D	G	G	H	C	P	T	M	M	K	O	O	J	C	M	K	S	S	G	I	H	Q	M	R	J	F	J	H	L	L	H	H	J	H	S	H	B	H	L	Q	N
+LCC1153	E	G	I	J	F	L	I	H	G	E	J	M	J	E	H	G	F	O	M	K	J	F	J	D	B	C	K	C	L	F	M	A	F	C	D	C	A	C	D	H	D	D	B	A	C	A
+LCC1154	D	I	G	F	G	M	H	K	F	C	G	H	F	G	G	G	D	N	G	F	I	F	H	F	I	F	N	K	Q	L	O	Q	J	D	E	G	F	I	E	H	L	D	J	L	I	C
+LCC1155	L	K	N	E	F	H	H	H	E	D	M	M	P	I	G	E	H	O	F	O	H	F	L	X	M	K	K	I	R	L	V	K	I	G	H	K	G	L	E	O	M	C	K	H	J	H
+LCC1157	H	E	J	A	I	B	J	H	E	B	I	K	H	E	E	C	J	L	E	N	I	E	J	W	J	V	C	M	J	O	T	M	L	L	I	G	P	C	J	S	L	D	M	L	N	J
+LCC1158	M	O	R	F	I	E	L	I	G	A	J	K	N	J	N	G	K	M	F	S	N	J	H	M	J	L	K	H	M	O	O	L	H	D	D	F	F	B	D	L	H	D	E	M	I	B
+LCC1159	E	F	N	C	B	A	L	E	F	D	L	M	I	F	B	H	H	J	C	K	O	G	K	H	F	L	K	E	J	M	M	H	H	F	G	H	E	G	D	N	J	B	H	H	I	D
+LCC2001	E	H	M	F	G	J	L	E	J	D	H	K	E	E	E	M	J	P	G	G	H	H	H																							
+LCC2002	J	M	U	I	G	J	P	L	J	E	F	G	O	G	N	D	G	X	G	L	O	K	H																							
+LCC2003	K	L	N	F	L	F	M	L	J	F	J	J	F	H	G	I	H	T	L	N	J	K	J																							
+LCC2004	B	D	D	F	E	E	E	G	A	B	C	D	C	A	F	F	C	F	E	B	C	C	C																							
+LCC2005	L	E	M	E	J	E	L	O	N	F	G	G	B	F	H	H	K	Q	D	P	P	G	G																							
+LCC2006	H	L	R	H	Q	J	J	J	O	D	L	O	K	I	J	K	G	Q	F	T	R	I	N																							
+LCC2007	L	I	V	J	G	P	O	N	X	F	L	N	H	I	I	P	M	V	I	N	W	M	K																							
+LCC2008	G	E	L	G	G	J	L	H	G	B	F	H	I	E	N	D	D	O	E	K	G	E	G																							
+LCC2009	P	I	Q	G	W	L	M	O	J	H	F	G	H	F	Q	G	J	R	E	L	G	F	I																							
+LCC2010	J	I	R	J	O	Q	J	I	I	D	J	K	L	G	J	G	J	R	E	K	I	L	K																							
+LCC2011	H	F	I	J	G	O	J	H	E	C	I	K	I	I	J	G	F	L	G	H	C	G	H																							
+LCC2012	G	H	J	G	J	L	H	N	G	C	H	J	I	F	J	G	E	S	D	M	G	H	J																							
+LCC2013	G	H	G	G	J	L	H	H	F	B	F	G	H	D	H	C	H	L	E	I	G	C	F																							
+LCC2014	K	K	N	H	O	G	I	H	L	E	H	K	H	F	H	J	C	I	D	O	J	I	M																							
+LCC2015	E	F	K	S	I	P	H	F	I	B	J	K	J	I	J	D	G	Q	J	K	E	G	K																							
+LCC2016	E	C	N	O	D	O	K	G	E	C	F	I	H	D	J	J	J	M	E	I	B	F	G																							
+LCC2017	J	F	L	I	E	L	O	G	N	D	E	D	J	H	G	F	G	Q	G	H	G	H	D																							
+LCC2018	I	E	M	L	F	M	L	I	G	D	F	G	H	F	J	C	L	V	F	H	A	D	F																							
+LCC2019	F	E	J	J	B	N	F	I	G	D	F	H	M	E	J	E	F	L	E	J	I	E	G																							
+LCC2020	D	D	K	H	H	K	J	C	E	B	E	F	F	B	H	B	D	L	F	H	D	C	F																							
+LCC2021	E	H	L	I	M	S	L	G	G	D	E	G	I	E	Q	G	F	Q	J	L	H	J	G																							
+LCC2022	G	I	Q	I	I	J	L	G	L	C	N	M	J	J	N	H	L	Q	D	L	G	K	L																							
+LCC2023	E	H	H	J	M	N	K	H	D	D	E	H	M	B	P	D	F	O	F	J	D	K	G																							
+LCC2024	L	R	T	J	T	J	L	N	Z	F	N	P	J	L	N	Y	O	Q	D	V	Z	Z	P																							
+LCC2025	F	I	I	G	L	L	P	J	I	F	F	E	G	D	L	D	H	R	D	O	G	D	F																							
+LCC2026	E	I	G	I	K	M	E	F	I	D	E	F	G	B	L	E	J	H	E	H	G	G	F																							
+LCC2027	L	H	U	M	C	O	P	F	J	E	E	F	L	E	I	C	K	R	C	G	G	E	E																							
+LCC2028	F	F	L	M	H	L	J	F	G	C	I	J	O	G	L	D	F	S	D	M	E	H	J																							
+LCC2029	K	E	L	H	F	I	G	I	F	D	L	K	J	L	I	G	J	Q	D	M	G	J	K																							
+LCC2030	H	H	I	I	I	E	L	G	G	D	E	F	K	F	J	F	J	P	E	L	C	F	F																							
+LCC2031	F	K	L	I	F	I	M	E	J	D	J	K	M	E	J	E	J	P	F	L	G	M	I																							
+LCC2032	F	F	N	M	G	P	P	I	G	B	H	G	I	D	K	E	M	O	G	F	A	F	G																							
+LCC2033	K	C	G	J	D	K	E	E	D	B	F	G	F	C	F	C	G	J	D	G	D	E	E																							
+LCC2034	H	M	J	J	H	M	K	G	K	F	B	B	F	C	E	J	E	H	K	C	L	J	E																							
+LCC2035	F	E	J	I	G	J	N	G	G	C	F	G	I	F	P	B	B	S	C	L	E	E	E																							
+LCC2036	G	H	N	I	G	H	G	I	H	C	I	I	J	G	M	I	C	P	H	J	J	I	I																							
+LCC2037	F	H	K	J	J	N	G	C	F	C	K	O	Q	I	L	E	F	J	D	V	G	O	P																							
+LCC2038	F	M	K	G	L	H	L	I	G	B	F	G	H	F	I	F	D	Q	E	I	D	F	F																							
+LCC2039	H	I	L	L	G	S	F	K	F	B	G	G	I	D	K	D	H	R	C	V	F	C	H																							
+LCC2040	E	D	I	O	B	S	L	G	E	C	D	E	G	B	I	E	F	K	H	F	H	F	E																							
+LCC2041	L	U	W	G	M	E	J	P	L	G	L	L	T	D	Q	L	T	S	D	O	I	K	N																							
+LCC2042	J	G	R	K	C	O	O	H	I	C	J	J	P	G	J	C	L	P	E	P	J	F	G																							
+LCC2043	G	J	N	I	J	K	E	F	G	E	H	H	L	D	O	G	F	I	D	K	D	K	I																							
+LCC2044	H	J	N	J	J	L	M	F	F	C	U	U	M	X	R	K	J	W	D	R	J	S	V																							
+LCC2045	E	H	L	F	H	E	K	G	M	C	F	E	K	G	H	E	D	M	E	K	E	D	H																							
+LCC2046	F	G	N	I	H	J	I	G	J	E	H	I	J	G	L	F	C	P	F	J	I	J	G																							
+LCC2047	F	C	H	I	E	H	I	F	E	A	E	H	I	D	O	E	D	N	E	I	F	F	F																							
+LCC2048	O	I	P	G	H	Q	I	H	F	A	I	K	L	I	N	G	F	Q	C	O	H	I	J																							
+LCC2049	M	C	M	D	F	G	K	L	D	C	K	J	G	D	I	D	G	P	D	L	F	F	I																							
+LCC2050	G	F	I	G	F	J	L	G	K	E	C	E	H	E	H	E	F	M	F	K	I	I	E																							
+LCC2051	G	L	O	K	G	M	I	I	H	C	S	R	T	O	O	G	H	T	H	Q	C	J	Q																							
+LCC2053	I	H	N	H	G	I	O	G	G	D	J	J	K	I	L	F	N	S	E	M	G	K	K																							
+LCC2054	F	I	L	K	B	Q	O	C	F	B	D	D	N	D	K	A	G	N	E	J	F	B	B																							
+LCC2055	J	E	M	N	G	R	S	K	G	B	G	G	D	H	M	G	J	U	D	I	D	E	E																							
+LCC2056	E	C	H	H	J	K	P	E	H	C	E	G	D	D	N	J	J	O	G	F	F	H	G																							
+LCC2057	H	B	P	I	A	K	O	D	I	B	I	I	I	G	F	D	M	K	E	G	D	C	H																							
+LCC2058	H	E	J	F	F	G	L	I	E	E	F	F	K	B	M	B	D	Q	E	L	C	E	E																							
+LCC2059	M	K	Y	M	O	K	H	F	P	C	R	Y	Z	Q	N	S	Q	U	E	Z	P	R	W																							
+LCC2060	H	D	G	F	D	N	H	L	B	B	C	D	F	A	G	B	D	P	C	D	B	A	D																							
+LCC2061	H	E	J	G	D	N	N	D	I	B	H	G	H	D	G	D	J	L	D	J	C	B	G																							
+LCC2062	H	H	L	K	K	H	H	J	G	E	F	G	K	C	J	G	G	P	F	M	C	H	I																							
+LCC2063	F	I	N	I	C	F	K	G	F	B	F	G	I	F	G	E	E	P	C	M	G	H	G																							
+LCC2064	K	G	Z	H	C	M	U	I	P	H	F	G	F	G	C	E	L	Q	D	M	J	J	F																							
+LCC2065	F	I	K	H	E	J	N	J	F	E	H	G	O	H	N	C	G	P	C	L	D	D	H																							
+LCC2066	H	D	L	E	H	G	I	J	C	C	F	H	J	D	L	E	B	N	E	I	I	E	H																							
+LCC2067	F	G	L	H	G	R	L	J	G	B	G	G	J	D	H	D	E	P	D	J	F	E	E																							
+LCC2068	I	F	U	E	F	E	H	G	F	C	H	J	M	F	I	F	E	K	C	N	B	F	H																							
+LCC2069	E	D	I	K	D	J	I	C	F	C	C	C	H	A	K	A	C	I	C	G	D	C	D																							
+LCC2070	J	F	O	L	E	O	L	J	H	F	J	L	N	H	O	D	H	U	G	L	F	I	J																							
+LCC2071	H	D	O	J	I	F	C	K	F	D	H	I	K	E	K	F	I	G	D	N	C	F	I																							
+LCC2072	F	D	H	I	A	N	I	G	C	A	I	I	L	C	K	B	G	J	D	I	C	A	H																							
+LCC2073	D	B	D	I	I	N	I	D	A	B	D	E	H	C	I	C	E	J	C	D	C	A	C																							
+LCC2074	I	H	N	E	L	H	I	K	J	F	L	P	K	I	M	M	J	K	D	M	I	M	M																							
+LCC2075	D	C	H	F	F	I	I	F	E	C	G	H	J	D	K	C	E	O	D	N	E	B	I																							

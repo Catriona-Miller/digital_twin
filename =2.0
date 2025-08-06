@@ -1,0 +1,35 @@
+Channels:
+ - conda-forge
+ - defaults
+Platform: linux-64
+Collecting package metadata (repodata.json): - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / - \ | / done
+Solving environment: \ | / - done
+
+## Package Plan ##
+
+  environment location: /home/cmil573/conda_env/causal-vae
+
+  added / updated specs:
+    - pytorch-lightning
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    fsspec-2025.7.0            |     pyhd8ed1ab_0         142 KB  conda-forge
+    lightning-utilities-0.15.1 |     pyhd8ed1ab_0          29 KB  conda-forge
+    pytorch-lightning-2.3.3    |     pyhd8ed1ab_0         432 KB  conda-forge
+    torchmetrics-1.8.0         |     pyhd8ed1ab_0         385 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:         988 KB
+
+The following NEW packages will be INSTALLED:
+
+  fsspec             conda-forge/noarch::fsspec-2025.7.0-pyhd8ed1ab_0 
+  lightning-utiliti~ conda-forge/noarch::lightning-utilities-0.15.1-pyhd8ed1ab_0 
+  pytorch-lightning  conda-forge/noarch::pytorch-lightning-2.3.3-pyhd8ed1ab_0 
+  torchmetrics       conda-forge/noarch::torchmetrics-1.8.0-pyhd8ed1ab_0 
+
+
+Proceed ([y]/n)? 

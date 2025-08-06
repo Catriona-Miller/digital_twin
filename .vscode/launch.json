@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+    
+        {
+            "name": "Debug from digital_twins/scripts when digital_twins open",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/scripts" 
+        },
+
+
+        {
+            "name": "Python Debugger: Python File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}"
+        }
+    ]
+}

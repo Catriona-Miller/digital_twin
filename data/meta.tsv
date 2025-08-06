@@ -1,0 +1,235 @@
+subjectID	Sex	Ethnicity	Condition	Feed	Recovery	Delivery_Mode	Supplementation	BF	PoB
+LCC1001	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	3	Clinic
+LCC1002	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	False	6	Clinic
+LCC1003	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	3	Clinic
+LCC1004	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1005	Male	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1006	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1007	Female	Bihari	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1008	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1009	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	False	6	Home
+LCC1010	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1011	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1012	Female	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	5	Clinic
+LCC1013	Female	Bengali	MAM	ERUSF (B)		Vaginal	True	6	Clinic
+LCC1014	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1015	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1016	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	2	Clinic
+LCC1017	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	3	Home
+LCC1018	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1019	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1020	Male	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1021	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1022	Female	Bihari	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1023	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1024	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1025	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1026	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1027	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	5	Clinic
+LCC1028	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1029	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	1	Clinic
+LCC1030	Male	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	3	Clinic
+LCC1031	Male	Bihari	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1032	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1033	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1034	Male	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1035	Female	Bihari	MAM	ERUSF (B)	No recovery	Vaginal	True	4	Clinic
+LCC1036	Female	Bengali	MAM	ERUSF (B)		Caesarean	True	6	Clinic
+LCC1037	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1038	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1039	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1040	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	False	7	Home
+LCC1041	Female	Bengali	MAM	Local RUSF (A)		Vaginal	True	3	Clinic
+LCC1042	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1043	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	5	Home
+LCC1044	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Clinic
+LCC1045	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Clinic
+LCC1046	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1047	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1048	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	1	Clinic
+LCC1049	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Clinic
+LCC1050	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	3	Clinic
+LCC1051	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1052	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	2	Clinic
+LCC1053	Male	Bihari	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1054	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1055	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1056	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	4	Home
+LCC1057	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1058	Male	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	False	6	Clinic
+LCC1059	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1060	Female	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1061	Female	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1062	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	5	Clinic
+LCC1063	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	4	Home
+LCC1064	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	1	Clinic
+LCC1065	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1066	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1067	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Clinic
+LCC1068	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Clinic
+LCC1069	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1070	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1071	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1072	Female	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1073	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	False	6	Clinic
+LCC1074	Female	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1075	Female	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1076	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	3	Clinic
+LCC1077	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1078	Male	Bengali	MAM	ERUSF (B)		Vaginal	True	6	Clinic
+LCC1079	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1080	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Clinic
+LCC1081	Male	Bengali	MAM	Local RUSF (A)		Vaginal	True	6	Home
+LCC1082	Male	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1083	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1084	Female	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1085	Male	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	3	Clinic
+LCC1086	Female	Bihari	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Clinic
+LCC1087	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	4	Clinic
+LCC1088	Male	Bihari	MAM	Local RUSF (A)	No recovery	Vaginal	False	4	Clinic
+LCC1089	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1090	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	3	Home
+LCC1091	Female	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1092	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1093	Female	Bihari	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1094	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	5	Home
+LCC1095	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1096	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	False	6	Clinic
+LCC1097	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1098	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1099	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1100	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	False	6	Home
+LCC1101	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1102	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	False	4	Home
+LCC1103	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1104	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1105	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1106	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	False	6	Home
+LCC1107	Male	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	False	0	Clinic
+LCC1108	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Clinic
+LCC1109	Female	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1110	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	False	3	Clinic
+LCC1111	Female	Bengali	MAM	ERUSF (B)		Vaginal	False	3	Clinic
+LCC1112	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Clinic
+LCC1113	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	4	Home
+LCC1114	Male	Bihari	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1115	Male	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1116	Male	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	1	Clinic
+LCC1117	Female	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	6	Clinic
+LCC1118	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Clinic
+LCC1119	Male	Bihari	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1120	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	False	6	Home
+LCC1121	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1122	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1123	Female	Bengali	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC1124	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1125	Female	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1126	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1127	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Clinic
+LCC1128	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1129	Male	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1130	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Clinic
+LCC1131	Male	Bengali	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1132	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1133	Male	Bengali	MAM	ERUSF (B)		Caesarean	True	1	Clinic
+LCC1134	Female	Bihari	MAM	ERUSF (B)	Recovered	Caesarean	True	6	Clinic
+LCC1135	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1136	Male	Bengali	MAM	ERUSF (B)	No recovery	Caesarean	True	6	Clinic
+LCC1137	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	False	6	Home
+LCC1138	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	False	4	Clinic
+LCC1139	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1140	Male	Bihari	MAM	Local RUSF (A)	No recovery	Caesarean	True	3	Clinic
+LCC1141	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	1	Home
+LCC1142	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1143	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1144	Female	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1145	Female	Bengali	MAM	Local RUSF (A)	Recovered	Caesarean	True	3	Clinic
+LCC1146	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1147	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	True	6	Home
+LCC1148	Female	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1149	Male	Bengali	MAM	ERUSF (B)	Recovered	Vaginal	False	6	Clinic
+LCC1150	Male	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	2	Home
+LCC1151	Female	Bihari	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Clinic
+LCC1152	Male	Bihari	MAM	Local RUSF (A)	Recovered	Vaginal	True	2	Clinic
+LCC1153	Male	Bihari	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Clinic
+LCC1154	Male	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Clinic
+LCC1155	Female	Bengali	MAM	Local RUSF (A)	Recovered	Vaginal	True	6	Home
+LCC1156	Female	Bengali	MAM	Local RUSF (A)		Vaginal	True	6	Home
+LCC1157	Male	Bengali	MAM	ERUSF (B)	No recovery	Vaginal	True	6	Home
+LCC1158	Female	Bengali	MAM	Local RUSF (A)	No recovery	Vaginal	True	6	Home
+LCC1159	Female	Bihari	MAM	Local RUSF (A)	No recovery	Caesarean	True	6	Clinic
+LCC2001	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2002	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2003	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2004	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2005	Female	Bengali	Well-nourished			Caesarean	False	6	Clinic
+LCC2006	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2007	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2008	Male	Bengali	Well-nourished			Vaginal	False	6	Clinic
+LCC2009	Male	Bengali	Well-nourished			Caesarean	True	4	Clinic
+LCC2010	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2011	Female	Bengali	Well-nourished			Vaginal	True	4	Clinic
+LCC2012	Female	Bengali	Well-nourished			Vaginal	False	4	Home
+LCC2013	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2014	Male	Bengali	Well-nourished			Caesarean	True	6	Home
+LCC2015	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2016	Female	Bengali	Well-nourished			Caesarean	True	3	Home
+LCC2017	Female	Bengali	Well-nourished			Vaginal	False	3	Clinic
+LCC2018	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2019	Female	Bengali	Well-nourished			Vaginal	False	6	Home
+LCC2020	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2021	Female	Bengali	Well-nourished			Vaginal	True	7	Clinic
+LCC2022	Female	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2023	Female	Bengali	Well-nourished			Caesarean	True	5	Clinic
+LCC2024	Male	Bengali	Well-nourished			Vaginal	True	5	Clinic
+LCC2025	Female	Bihari	Well-nourished			Caesarean	True	6	Clinic
+LCC2026	Male	Bengali	Well-nourished			Vaginal	True	1	Clinic
+LCC2027	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2028	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2029	Male	Bengali	Well-nourished			Vaginal	False	4	Home
+LCC2030	Female	Bengali	Well-nourished			Vaginal	False	5	Clinic
+LCC2031	Male	Bengali	Well-nourished			Vaginal	True	0	Clinic
+LCC2032	Male	Bengali	Well-nourished			Vaginal	True	1	Home
+LCC2033	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2034	Male	Bengali	Well-nourished			Caesarean	True	5	Clinic
+LCC2035	Female	Bengali	Well-nourished			Vaginal	True	6	Clinic
+LCC2036	Male	Bengali	Well-nourished			Vaginal	False	6	Home
+LCC2037	Female	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2038	Male	Bengali	Well-nourished			Caesarean	True	5	Clinic
+LCC2039	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2040	Female	Bihari	Well-nourished			Caesarean	True	6	Clinic
+LCC2041	Female	Bengali	Well-nourished			Vaginal	True	6	Clinic
+LCC2042	Male	Bengali	Well-nourished			Vaginal	True	6	Clinic
+LCC2043	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2044	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2045	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2046	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2047	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2048	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2049	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2050	Male	Bihari	Well-nourished			Caesarean	True	6	Clinic
+LCC2051	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2052	Female	Bengali	Well-nourished			Vaginal	True	5	Home
+LCC2053	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2054	Male	Bengali	Well-nourished			Vaginal	True	6	Clinic
+LCC2055	Male	Bengali	Well-nourished			Caesarean	True	5	Clinic
+LCC2056	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2057	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2058	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2059	Female	Bengali	Well-nourished			Caesarean	True	2	Clinic
+LCC2060	Female	Bengali	Well-nourished			Vaginal	True	6	Clinic
+LCC2061	Male	Bengali	Well-nourished			Caesarean	True	3	Clinic
+LCC2062	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2063	Female	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2064	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2065	Male	Bengali	Well-nourished			Caesarean	True	3	Clinic
+LCC2066	Male	Bengali	Well-nourished			Caesarean	True	0	Clinic
+LCC2067	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2068	Male	Bengali	Well-nourished			Vaginal	False	4	Home
+LCC2069	Male	Bengali	Well-nourished			Caesarean	True	6	Clinic
+LCC2070	Male	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2071	Male	Bengali	Well-nourished			Caesarean	True	0	Clinic
+LCC2072	Female	Bengali	Well-nourished			Vaginal	True	6	Home
+LCC2073	Male	Bengali	Well-nourished			Vaginal	True	6	Clinic
+LCC2074	Female	Bengali	Well-nourished			Vaginal	True	0	Clinic
+LCC2075	Female	Bengali	Well-nourished			Vaginal	True	6	Home
