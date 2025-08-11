@@ -1,0 +1,24 @@
+name: /home/cmil573/conda_env/causal-vae
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - scikit-learn
+  - numpy
+  - pandas
+  - seaborn
+  - tqdm
+  - scipy
+  - matplotlib
+  - jupyter
+  - ipywidgets
+  - torchvision
+  - torchaudio
+  - cpuonly
+  - pytorch=2.0
+  - pytorch-lightning
+  - pyro-ppl
+  - numpyro
+  - pymc
+  - dowhy
+prefix: /home/cmil573/conda_env/causal-vae
