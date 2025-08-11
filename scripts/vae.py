@@ -7,14 +7,17 @@ pl.seed_everything(10)
 
 
 # Load the data
-df_scaled = pd.read_csv('../data/combined_imputed_scaled.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_large.tsv', sep='\t', index_col=0)
+# get just the mam kids
+meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
+df_scaled = df_scaled[df_scaled.index.isin(meta_data[meta_data['Condition'] == 'MAM']['subjectID'])]
 
 X = torch.tensor(df_scaled.values, dtype=torch.float32)
 dataset = TensorDataset(X, X)
 
 INPUT_DIM   = X.shape[1]
-LATENT_DIM  = 32 
-HIDDEN_DIM  = 512
+LATENT_DIM  = 64
+HIDDEN_DIM  = 1024
 BETA        = 1e-5
 BATCH_SIZE  = 256
 MAX_EPOCHS  = 400
@@ -26,19 +29,27 @@ class VAEWorld(pl.LightningModule):
         # encoder
         self.enc = nn.Sequential(
             nn.Linear(in_dim, hidden),
+            nn.BatchNorm1d(hidden),
             nn.ReLU(),
-            nn.Linear(hidden, hidden//2),
-            nn.ReLU()
+            nn.Dropout(0.3),
+            nn.Linear(hidden, hidden // 2),
+            nn.BatchNorm1d(hidden // 2),
+            nn.ReLU(),
+            nn.Dropout(0.3)
         )
         self.mu     = nn.Linear(hidden//2, latent)
         self.logvar = nn.Linear(hidden//2, latent)
 
         # decoder
         self.dec = nn.Sequential(
-            nn.Linear(latent, hidden//2),
+            nn.Linear(latent, hidden // 2),
+            nn.BatchNorm1d(hidden // 2),
             nn.ReLU(),
-            nn.Linear(hidden//2, hidden),
+            nn.Dropout(0.3),
+            nn.Linear(hidden // 2, hidden),
+            nn.BatchNorm1d(hidden),
             nn.ReLU(),
+            nn.Dropout(0.3),
             nn.Linear(hidden, in_dim)
         )
 
@@ -98,4 +109,4 @@ with torch.no_grad():
     x_rec, _, _ = model(x_sample)
     print("Reconstruction MSE:", nn.functional.mse_loss(x_rec, x_sample).item())
 
-torch.save(model.state_dict(), "vae_world.pt")
+torch.save(model.state_dict(), "vae_world_large_mam.pt")

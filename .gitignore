@@ -1,1 +1,2 @@
 scripts/lightning_logs/*
+models/mam_qnet.pkl
