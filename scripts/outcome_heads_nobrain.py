@@ -9,8 +9,9 @@ import joblib
 from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 from datetime import datetime
-from sklearn.ensemble import RandomForestRegressor
-save = False
+
+save = True
+
 
 def combine_df(df):
     # separate into two dataframes for timepoints 0 and 52
@@ -27,7 +28,7 @@ def combine_df(df):
     merged_df.rename(columns={'sampleID': 'subjectID'}, inplace=True)
     return merged_df
 
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
 wolkes_data = pd.read_csv('../data/wolkes.tsv', sep='\t')
 bayley_data = pd.read_csv('../data/bayley.tsv', sep='\t')
 anthro_data = pd.read_csv('../data/anthro.tsv', sep='\t')
@@ -101,29 +102,27 @@ val_loader   = make_loader(X_val,   y_val,   shuffle=False)
 test_loader  = make_loader(X_test,  y_test,  shuffle=False)
 
 class VAEWithHeads(pl.LightningModule):
-    def __init__(self, vae, important_dims=None):
+    def __init__(self, vae):
         super().__init__()
         self.vae   = vae
-        self.important_dims = important_dims
-        effective_dims = len(important_dims) if important_dims is not None else LATENT_DIM
         # Regression heads
         self.reg_heads = nn.ModuleDict({
             "cognitive_score_52": nn.Sequential(
-                nn.Linear(effective_dims, 64),
+                nn.Linear(LATENT_DIM, 64),
                 nn.BatchNorm1d(64),
                 nn.ReLU(),
                 nn.Dropout(0.2),
                 nn.Linear(64, 1)
             ),
             "vocalisation_52": nn.Sequential(
-                nn.Linear(effective_dims, 128),
+                nn.Linear(LATENT_DIM, 128),
                 nn.BatchNorm1d(128),
                 nn.ReLU(),
                 nn.Dropout(0.2),
                 nn.Linear(128, 1)
             ),
             "WLZ_WHZ_52": nn.Sequential(
-                nn.Linear(effective_dims, 64),
+                nn.Linear(LATENT_DIM, 64),
                 nn.BatchNorm1d(64),
                 nn.ReLU(),
                 nn.Dropout(0.2),
@@ -133,17 +132,10 @@ class VAEWithHeads(pl.LightningModule):
         self.log_vars = nn.ParameterDict({
             'reg': nn.Parameter(torch.tensor(0.0))
         })
-        self.task_log_vars = nn.ParameterDict({
-            "cog": nn.Parameter(torch.zeros(1)),
-            "voc": nn.Parameter(torch.zeros(1)),
-            "wlz": nn.Parameter(torch.zeros(1)),
-        })
 
     def forward(self, x):
         mu, logvar = self.vae.encode(x)
         z = self.vae.reparameterize(mu, logvar)
-        if self.important_dims is not None:
-            z = z[:, self.important_dims]
         preds = {k: head(z) for k, head in self.reg_heads.items()}
         return preds
     
@@ -151,15 +143,10 @@ class VAEWithHeads(pl.LightningModule):
         x, cog52, voc52, recovery = batch
         preds = self(x)
 
-        #L1 reg
-        l1_lambda = 1e-6
-        wlz_l1 = l1_lambda * sum(p.abs().sum() for p in self.reg_heads["WLZ_WHZ_52"].parameters())
-    
-
         # Separate losses for each target
         loss_cog = nn.functional.mse_loss(preds["cognitive_score_52"], cog52)
         loss_voc = nn.functional.mse_loss(preds["vocalisation_52"], voc52)
-        loss_wlz = nn.functional.mse_loss(preds["WLZ_WHZ_52"], recovery) + wlz_l1
+        loss_wlz = nn.functional.mse_loss(preds["WLZ_WHZ_52"], recovery)
         
         # Total loss
         loss_reg = loss_cog + loss_voc + loss_wlz
@@ -199,34 +186,27 @@ class VAEWithHeads(pl.LightningModule):
         head_params = list(self.reg_heads.parameters())
         optimizer = torch.optim.AdamW([
             {'params': vae_params,  'lr': 1e-5, 'weight_decay': 1e-6},
-            {'params': head_params, 'lr': 3e-4, 'weight_decay': 1e-4}
+            {'params': head_params, 'lr': 1e-3, 'weight_decay': 1e-5}
         ])
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(
-            optimizer,
-            max_lr=3e-4,
-            steps_per_epoch=len(train_loader),
-            epochs=400
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode='min', factor=0.2, patience=10, verbose=True, threshold=0.001
         )
         return {
             "optimizer": optimizer,
-            "lr_scheduler": {
-                "scheduler": scheduler,
-                "interval": "step",  # update every batch
-                "frequency": 1
-            }
+            "lr_scheduler": {"scheduler": scheduler, "monitor": "val_loss_reg_total"}
         }
     
 
-scaler = joblib.load('../data/scaler_large_nolip.save')
+scaler = joblib.load('../data/scaler_large_nolip_psd.save')
 X = torch.tensor(df_scaled.values, dtype=torch.float32)    
 INPUT_DIM   = X.shape[1]
 LATENT_DIM  = 64
 HIDDEN_DIM  = 1024
 model = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM)
-model.load_state_dict(torch.load('vae_world_large_mam_nolip_mse.pt', map_location='cpu'))
+model.load_state_dict(torch.load('vae_world_large_mam_nolip_psd_mse.pt', map_location='cpu'))
 #model.eval()
 
-model_heads = VAEWithHeads(model, important_dims=None)
+model_heads = VAEWithHeads(model)
 # Freeze the VAE encoder / decoder
 for p in model_heads.vae.parameters():
     p.requires_grad = False
@@ -237,7 +217,7 @@ trainer = pl.Trainer(
     log_every_n_steps=1,
     callbacks=[
         pl.callbacks.EarlyStopping(
-            monitor='val_loss_wlz',
+            monitor='val_loss_reg_total',
             mode='min',
             patience=15,
             min_delta=0.001
@@ -263,6 +243,14 @@ save_dict = {
     'validation_metrics': trainer.callback_metrics
 }
 
+
+# Save with timestamp and metrics
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+model_path = f'../models/vae_heads_reg_{timestamp}.pt'
+
+torch.save(save_dict, model_path)
+print(f"Model saved to: {model_path}")
+
 metrics = trainer.callback_metrics
 
 metric_key_map = {
@@ -283,13 +271,6 @@ for i, col in enumerate(regression_cols):
     mse_original = metrics[key].item() * (std ** 2)
     print(f"  {col}: {mse_original:.4f}")
 
-# Save with timestamp and metrics
-# timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-# model_path = f'../models/vae_heads_reg_{timestamp}.pt'
-
-# torch.save(save_dict, model_path)
-# print(f"Model saved to: {model_path}")
-
 if save:
     torch.save({
         'state_dict': model_heads.state_dict(),   # full VAE + heads
@@ -298,82 +279,4 @@ if save:
         'input_dim': INPUT_DIM,
         'latent_dim': LATENT_DIM,
         'hidden_dim': HIDDEN_DIM,
-    }, '../models/vae_heads_nolip_mse_onecyclelr.pt')
-
-
-
-# # Now do feature selection using only training data
-# X_train_features = joined.iloc[train_idx][df_scaled.columns]
-# y_train_wlz = joined.iloc[train_idx]['WLZ_WHZ_52']
-
-# # Train RF on original features from training data only
-# rf = RandomForestRegressor(n_estimators=100, random_state=10)
-# rf.fit(X_train_features, y_train_wlz)
-
-# # Get feature importance
-# feature_importances = pd.Series(
-#     rf.feature_importances_,
-#     index=df_scaled.columns
-# )
-
-# print("\nTop 20 most important features for WLZ prediction:")
-# print(feature_importances.nlargest(20))
-
-# # Keep only features with importance > mean importance
-# mean_importance = feature_importances.mean()
-# important_features = feature_importances[feature_importances > mean_importance]
-# print(f"\nKeeping {len(important_features)} features above mean importance")
-
-# # Create new VAE model with reduced input dimension
-# INPUT_DIM_SELECTED = len(important_features)
-
-# # Create new datasets with only important features
-# X_train_selected = torch.tensor(X_train_features[important_features.index].values, dtype=torch.float32)
-# X_val_selected = torch.tensor(joined.iloc[val_idx][important_features.index].values, dtype=torch.float32)
-# X_test_selected = torch.tensor(joined.iloc[test_idx][important_features.index].values, dtype=torch.float32)
-
-# # Create new dataloaders with selected features
-# train_loader_selected = make_loader(X_train_selected, y_train, shuffle=True)
-# val_loader_selected = make_loader(X_val_selected, y_val, shuffle=False)
-# test_loader_selected = make_loader(X_test_selected, y_test, shuffle=False)
-
-# dataset_selected = TensorDataset(X_train_selected, X_train_selected)
-# train_loader_vae = DataLoader(
-#     dataset_selected,
-#     batch_size=256,
-#     shuffle=True,
-#     num_workers=4
-# )
-
-# # Train the VAE
-# model_selected = VAEWorld(INPUT_DIM_SELECTED, LATENT_DIM, HIDDEN_DIM)
-# trainer_vae = pl.Trainer(
-#     max_epochs=400,
-#     accumulate_grad_batches=4,
-#     gradient_clip_val=1.0,
-#     gradient_clip_algorithm='norm'
-# )
-# trainer_vae.fit(model_selected, train_loader_vae)
-
-# # Train new model with selected features
-# model_heads_selected = VAEWithHeads(model_selected, important_dims=None)
-
-
-# trainer_selected = pl.Trainer(
-#     max_epochs=400,
-#     log_every_n_steps=1,
-#     callbacks=[
-#         pl.callbacks.EarlyStopping(
-#             monitor='val_loss_wlz',
-#             mode='min',
-#             patience=15,
-#             min_delta=0.001
-#         )
-#     ],
-#     gradient_clip_val=0.5,
-#     gradient_clip_algorithm='norm',
-#     accumulate_grad_batches=2
-# )
-
-# trainer_selected.fit(model_heads_selected, train_loader_selected, val_loader_selected)
-# trainer_selected.validate(model_heads_selected, test_loader_selected)
+    }, '../models/vae_heads_nolip_psd_mse.pt')

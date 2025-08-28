@@ -3,7 +3,7 @@ import torch
 import pandas as pd
 import numpy as np
 from vae import VAEWorld
-from outcome_heads_train_reg import VAEWithHeads
+from outcome_heads_nobrain import VAEWithHeads
 
 LATENT_DIM  = 64
 HIDDEN_DIM  = 1024
@@ -13,7 +13,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 # ----------------------------
 # Load inputs (already z-scored)
 # ----------------------------
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 mam_ids = meta_data[meta_data['Condition'] == 'MAM']['subjectID']
 df_scaled = df_scaled.loc[df_scaled.index.intersection(mam_ids)]
@@ -24,11 +24,11 @@ INPUT_DIM = df_scaled.shape[1]
 # Load VAE + Heads
 # ----------------------------
 vae = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM).to(DEVICE)
-vae.load_state_dict(torch.load('vae_world_large_mam_nolip_mse.pt', map_location=DEVICE))
+vae.load_state_dict(torch.load('vae_world_large_mam_nolip_psd_mse.pt', map_location=DEVICE))
 vae.eval()
 
 heads = VAEWithHeads(vae).to(DEVICE)
-ckpt = torch.load('../models/vae_heads_nolip_mse_onecyclelr.pt', map_location=DEVICE)
+ckpt = torch.load('../models/vae_heads_nolip_psd_mse.pt', map_location=DEVICE)
 state = ckpt.get('state_dict', ckpt)
 missing, unexpected = heads.load_state_dict(state, strict=False)
 print("Heads load_state_dict missing keys:", missing)
