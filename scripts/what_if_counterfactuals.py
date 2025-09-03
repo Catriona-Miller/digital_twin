@@ -10,9 +10,7 @@ HIDDEN_DIM  = 1024
 BATCH_SIZE  = 512
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# ----------------------------
-# Load inputs (already z-scored)
-# ----------------------------
+# Load inputs
 df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 mam_ids = meta_data[meta_data['Condition'] == 'MAM']['subjectID']
@@ -20,9 +18,9 @@ df_scaled = df_scaled.loc[df_scaled.index.intersection(mam_ids)]
 
 INPUT_DIM = df_scaled.shape[1]
 
-# ----------------------------
+editable_cols = pd.read_csv('../data/combined_imputed_scaled_large_nolip_editable.tsv', sep='\t', index_col=0).columns.tolist()
+
 # Load VAE + Heads
-# ----------------------------
 vae = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM).to(DEVICE)
 vae.load_state_dict(torch.load('vae_world_large_mam_nolip_psd_mse.pt', map_location=DEVICE))
 vae.eval()
@@ -39,9 +37,7 @@ heads.eval()
 target_scaler = ckpt.get('target_scaler', None)
 regression_cols = ckpt.get('regression_cols', ['cognitive_score_52', 'vocalisation_52', 'WLZ_WHZ_52'])
 
-# ----------------------------
 # One-hot detection (binary columns stay 0/1)
-# ----------------------------
 def detect_dummy_cols(df: pd.DataFrame):
     return [c for c in df.columns if df[c].dropna().isin([0, 1]).all()]
 
@@ -52,9 +48,7 @@ def group_onehots_by_prefix(dummy_cols, prefix: str):
     pfx = prefix if prefix.endswith('_') else prefix + '_'
     return [c for c in dummy_cols if c.startswith(pfx)]
 
-# ----------------------------
 # Encoding and prediction
-# ----------------------------
 @torch.no_grad()
 def encode_df(df: pd.DataFrame) -> torch.Tensor:
     vae.eval()
@@ -91,9 +85,7 @@ def predict_df(df: pd.DataFrame):
 
     return preds_scaled, preds_inv
 
-# ----------------------------
 # Interventions
-# ----------------------------
 def apply_intervention(base_df: pd.DataFrame,
                        add: dict | None = None,
                        set_: dict | None = None,
@@ -125,11 +117,20 @@ def apply_intervention(base_df: pd.DataFrame,
     return df
 
 def population_effect(base_df: pd.DataFrame, add=None, set_=None, onehot_sets=None):
+    '''
+    Estimate the population effect of an intervention by applying it to the base DataFrame
+    and predicting the outcomes.
+    FINISH
+    '''
     df_int = apply_intervention(base_df, add=add, set_=set_, onehot_sets=onehot_sets)
     preds_s, preds = predict_df(df_int)
     return preds_s.mean().to_dict(), preds.mean().to_dict()
 
 def grid_search_continuous(base_df: pd.DataFrame, sweep: dict):
+    '''
+    Perform a grid search over continuous parameters.
+    FINISH
+    '''
     from itertools import product
     keys = list(sweep.keys())
     grids = list(product(*[sweep[k] for k in keys]))
@@ -143,6 +144,10 @@ def grid_search_continuous(base_df: pd.DataFrame, sweep: dict):
 def grid_search_mixed(base_df: pd.DataFrame,
                       continuous_set: dict[str, np.ndarray] | None,
                       onehot_choices: dict[str, list[str]] | None):
+    '''
+    Perform a grid search over mixed parameters.
+    FINISH
+    '''
     from itertools import product
     cont_items = list((continuous_set or {}).items())
     cat_items  = list((onehot_choices or {}).items())
@@ -162,9 +167,8 @@ def grid_search_mixed(base_df: pd.DataFrame,
                          **mean_inv})
     return pd.DataFrame(rows)
 
-# ----------------------------
+
 # Diagnostics
-# ----------------------------
 def input_sensitivity(df: pd.DataFrame, top_k=20) -> pd.Series:
     # Computes average |d WLZ / d x| over a mini-batch
     vae.eval(); heads.eval()
@@ -176,6 +180,18 @@ def input_sensitivity(df: pd.DataFrame, top_k=20) -> pd.Series:
     wlz_mean.backward()
     grad = x.grad.detach().abs().mean(0).cpu().numpy()
     idx = np.argsort(-grad)[:top_k]
+    return pd.Series(grad[idx], index=df.columns[idx])
+
+def input_sensitivity_directional(df: pd.DataFrame, top_k=20) -> pd.Series:
+    vae.eval(); heads.eval()
+    x = torch.tensor(df.iloc[:min(len(df), BATCH_SIZE)].values, dtype=torch.float32, device=DEVICE, requires_grad=True)
+    mu, _ = vae.encode(x)
+    z = mu
+    wlz_mean = heads.reg_heads['WLZ_WHZ_52'](z).squeeze(1).mean()
+    vae.zero_grad(set_to_none=True); heads.zero_grad(set_to_none=True)
+    wlz_mean.backward()
+    grad = x.grad.detach().mean(0).cpu().numpy()  
+    idx = np.argsort(-np.abs(grad))[:top_k]
     return pd.Series(grad[idx], index=df.columns[idx])
 
 def diagnose_intervention(base_df: pd.DataFrame, set_: dict | None = None, add: dict | None = None):
@@ -218,12 +234,21 @@ def _project_binaries_inplace(x_tensor: torch.Tensor, cols: list[int]):
     if len(cols) == 0: return
     x_tensor.data[:, cols] = x_tensor.data[:, cols].clamp(0.0, 1.0)
 
+def _freeze_disallowed_inplace(x_tensor: torch.Tensor, x0_tensor: torch.Tensor, allowed_idx: list[int]):
+    all_idx = torch.arange(x_tensor.shape[1], device=x_tensor.device)
+    mask = torch.ones_like(all_idx, dtype=torch.bool)
+    mask[allowed_idx] = False
+    disallowed_idx = all_idx[mask]
+    if disallowed_idx.numel() > 0:
+        x_tensor.data[:, disallowed_idx] = x0_tensor.data[:, disallowed_idx]
+
 def counterfactual_optimize_x(row: pd.Series,
                               target_delta=0.3,
                               lam=1e-2,
                               steps=300,
                               lr=0.05,
-                              dummy_cols: list[str] | None = None):
+                              dummy_cols: list[str] | None = None,
+                              allowed_cols: list[str] | None = None):
     """
     Find x_cf close to x that changes WLZ by target_delta (orig units).
     Works in scaled input space; returns df of x, x_cf, and prediction change.
@@ -236,6 +261,8 @@ def counterfactual_optimize_x(row: pd.Series,
 
     # Which indices are binary/dummies
     dummy_indices = [row.index.get_loc(c) for c in (dummy_cols or []) if c in row.index]
+    # which allowed to change
+    allowed_indices = [row.index.get_loc(c) for c in (allowed_cols or []) if c in row.index]
 
     # Compute current WLZ (orig units)
     with torch.no_grad():
@@ -259,6 +286,9 @@ def counterfactual_optimize_x(row: pd.Series,
         opt.step()
         # keep binaries in [0,1]
         _project_binaries_inplace(x_cf, dummy_indices)
+        # freeze disallowed features
+        if allowed_cols is not None:
+            _freeze_disallowed_inplace(x_cf, x0, allowed_indices)
 
     with torch.no_grad():
         mu, _ = vae.encode(x_cf)
@@ -266,6 +296,13 @@ def counterfactual_optimize_x(row: pd.Series,
         delta = float((y_cf - y0).mean().item())
 
     x_cf_np = x_cf.detach().cpu().numpy().squeeze(0)
+
+        # Round the binary features in the final result
+    # binary_col_names = [c for c in (dummy_cols or []) if c in row.index]
+    # for col_name in binary_col_names:
+    #     loc = row.index.get_loc(col_name)
+    #     x_cf_np[loc] = round(x_cf_np[loc])
+
     df_changes = pd.DataFrame({
         'feature': row.index,
         'x0': x0_np,
@@ -280,10 +317,17 @@ def counterfactual_optimize_x(row: pd.Series,
         'changes': df_changes
     }
 
+def wlz_std_original_units():
+    # Return std of WLZ in original units
+    try:
+        if target_scaler is None or not hasattr(target_scaler, 'scale_'):
+            return None
+        idx = regression_cols.index('WLZ_WHZ_52')
+        return float(target_scaler.scale_[idx])
+    except Exception:
+        return None
 
-# ----------------------------
 # Main
-# ----------------------------
 if __name__ == '__main__':
     # Baseline predictions
     preds_s, preds = predict_df(df_scaled)
@@ -291,7 +335,7 @@ if __name__ == '__main__':
           float(preds['WLZ_WHZ_52'].mean()),
           float(preds['WLZ_WHZ_52'].std()))
 
-    # Strong change on a continuous feature (if present)
+    # Strong change on a continuous feature
     some_cont = None
     for c in df_scaled.columns:
         if c not in DUMMY_COLS:
@@ -304,7 +348,7 @@ if __name__ == '__main__':
         print(f"WLZ mean delta after +2 on {some_cont}:",
               float((preds_j['WLZ_WHZ_52'] - preds['WLZ_WHZ_52']).mean()))
 
-    # Latent perturbation sensitivity (first latent dim)
+    # Latent perturbation sensitivity
     with torch.no_grad():
         x = torch.tensor(df_scaled.values[:min(1024, len(df_scaled))], dtype=torch.float32, device=DEVICE)
         mu, _ = vae.encode(x)
@@ -316,15 +360,16 @@ if __name__ == '__main__':
         print("WLZ mean delta after latent[0] += 2:",
               float((wlz1 - wlz0).mean()))
 
+
     # Input sensitivity ranking
     print("\nTop input sensitivities (|d WLZ / d x|):")
-    print(input_sensitivity(df_scaled, top_k=20))
+    print(input_sensitivity_directional(df_scaled, top_k=20))
 
-    # Diagnose a named intervention (example: set Weight to +2 from its mean, if exists)
+    # Diagnose a named intervention
     if 'Weight' in df_scaled.columns:
         _ = diagnose_intervention(df_scaled, set_={'Weight': df_scaled['Weight'].mean() + 2.0})
 
-    # Example: enforce a one-hot group toggle (Feed) if present
+    # enforce a one-hot group toggle (Feed) if present
     feed_group = group_onehots_by_prefix(DUMMY_COLS, 'Feed')
     if feed_group:
         chosen = feed_group[0]  # choose any available feed category
@@ -333,23 +378,43 @@ if __name__ == '__main__':
         delta = preds_feed['WLZ_WHZ_52'] - preds['WLZ_WHZ_52']
         print(f"WLZ mean delta after forcing {chosen}:", float(delta.mean()), "std:", float(delta.std()))
 
-    # 1) Heterogeneity: who responds most to a given intervention
+    #  who responds most to a given intervention
     if 'Weight' in df_scaled.columns:
         top = individual_effects(df_scaled, set_={'Weight': df_scaled['Weight'].mean() + 2.0}, top_k=10)
         print("\nTop 10 individual WLZ deltas for Weight+2 (orig units):")
         print(top)
 
-    # 2) Counterfactual optimization on a single person
-    # pick a random individual
+    # Counterfactual optimization on a single person
     ix = np.random.choice(df_scaled.index)
     person = df_scaled.loc[ix]
-    # which columns are binary
     DUMMY_COLS = [c for c in df_scaled.columns if df_scaled[c].dropna().isin([0,1]).all()]
-    cf = counterfactual_optimize_x(person, target_delta=1, lam=5e-3, steps=400, lr=0.05, dummy_cols=DUMMY_COLS)
-    print(f"\nCounterfactual for {ix}: WLZ {cf['wlz_base']:.3f} -> {cf['wlz_cf']:.3f} (Δ {cf['wlz_delta']:.3f})")
+
+    og_unit_change = 1.0
+    target_delta_scaled = og_unit_change / (wlz_std_original_units() or 1.0)
+
+    # remove microbiome diversity scores (anything that ends in 0 or 52) from editable columns
+    #editable_cols = [c for c in editable_cols if not (c.endswith('_0') or c.endswith('_52'))]
+
+    cf = counterfactual_optimize_x(person, target_delta=target_delta_scaled, lam=5e-3, steps=400, lr=0.05, dummy_cols=DUMMY_COLS, allowed_cols=editable_cols)
+
+    if target_scaler is not None:
+        try:
+            wlz_idx = regression_cols.index('WLZ_WHZ_52')
+            wlz_mean = target_scaler.mean_[wlz_idx]
+            wlz_std = target_scaler.scale_[wlz_idx]
+            wlz_base_orig = cf['wlz_base'] * wlz_std + wlz_mean
+            wlz_cf_orig = cf['wlz_cf'] * wlz_std + wlz_mean
+            wlz_delta_orig = cf['wlz_delta'] * wlz_std
+        except (ValueError, IndexError):
+            print("Warning: Could not find 'WLZ_WHZ_52' in target_scaler columns. Using scaled values.")
+            wlz_base_orig = cf['wlz_base']
+            wlz_cf_orig = cf['wlz_cf']
+            wlz_delta_orig = cf['wlz_delta']
+
+    print(f"\nCounterfactual for {ix}: WLZ {wlz_base_orig:.3f} -> {wlz_cf_orig:.3f} (Δ {wlz_delta_orig:.3f}) [original units]")
     print("Top changed inputs (scaled units):")
     print(cf['changes'].head(15))
-    # Example grid over a continuous var (save optional)
+    # Example grid over a continuous var
     # if 'Weight' in df_scaled.columns:
     #     deltas = np.linspace(-2, 2, 21)
     #     grid = grid_search_continuous(df_scaled, {'Weight': deltas})

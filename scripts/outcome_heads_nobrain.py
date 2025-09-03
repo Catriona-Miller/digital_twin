@@ -10,7 +10,7 @@ from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 from datetime import datetime
 
-save = True
+save = False
 
 
 def combine_df(df):

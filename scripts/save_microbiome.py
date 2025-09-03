@@ -56,3 +56,13 @@ pcs_df = pcs_df.set_index('subjectID')
 # combine the columns of pcs_df with diversity based on sampleID
 combined_df = pd.merge(pcs_df, diversity, left_index=True, right_index=True, how='outer')
 combined_df.to_csv('../data/microbiome_pcs.tsv', sep='\t', index=True)
+
+
+#get makeup of pcs
+feature_names = microbiome_data.columns
+loadings = pd.DataFrame(
+    pca.components_,
+    columns=feature_names,
+    index=[f'pc{i+1}' for i in range(10)]
+)
+loadings.to_csv('../data/pc_contributions.tsv', sep='\t')
