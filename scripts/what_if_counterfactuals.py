@@ -2,6 +2,7 @@
 import torch
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 from vae import VAEWorld
 from outcome_heads_nobrain import VAEWithHeads
 
@@ -19,6 +20,10 @@ df_scaled = df_scaled.loc[df_scaled.index.intersection(mam_ids)]
 INPUT_DIM = df_scaled.shape[1]
 
 editable_cols = pd.read_csv('../data/combined_imputed_scaled_large_nolip_editable.tsv', sep='\t', index_col=0).columns.tolist()
+# remove Members_in_household, Number of rooms in household
+editable_cols = [c for c in editable_cols if c != 'Members_in_household' and c != 'Number_of_rooms_in_current_household']
+# remove microbiome diversity scores (anything that ends in 0 or 52) from editable columns
+editable_cols = [c for c in editable_cols if not (c.endswith('_0') or c.endswith('_52'))]
 
 # Load VAE + Heads
 vae = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM).to(DEVICE)
@@ -327,6 +332,83 @@ def wlz_std_original_units():
     except Exception:
         return None
 
+def generate_population_optimization_results(df: pd.DataFrame,
+                                             target_wlz=-1,
+                                             lam=5e-3,
+                                             steps=400,
+                                             lr=0.05,
+                                             dummy_cols: list[str] | None = None,
+                                             allowed_cols: list[str] | None = None):
+    """
+    Runs counterfactual optimization for every individual in the dataframe to reach a target WLZ.
+    FINISH
+    """
+    all_changes_list = []
+
+    wlz_idx = regression_cols.index('WLZ_WHZ_52')
+    wlz_mean = target_scaler.mean_[wlz_idx]
+    wlz_std = target_scaler.scale_[wlz_idx]
+
+    # Get baseline predictions for everyone first to calculate target_delta efficiently
+    print("Calculating baseline predictions for the population...")
+    _, preds_baseline_orig = predict_df(df)
+    
+    for ix, person in tqdm(df.iterrows(), total=len(df)):
+        # Get the individual's baseline WLZ in original units
+        wlz_base_orig = preds_baseline_orig.loc[ix, 'WLZ_WHZ_52']
+
+        # Don't run optimization if they already meet the target
+        if wlz_base_orig >= target_wlz:
+            continue
+
+        # Convert everything to scaled units for the optimizer
+        wlz_base_scaled = (wlz_base_orig - wlz_mean) / wlz_std 
+        target_wlz_scaled = (target_wlz - wlz_mean) / wlz_std
+        target_delta_scaled = target_wlz_scaled - wlz_base_scaled
+
+        # Run optimization
+        cf = counterfactual_optimize_x(
+            person,
+            target_delta=target_delta_scaled,
+            lam=lam,
+            steps=steps,
+            lr=lr,
+            dummy_cols=dummy_cols,
+            allowed_cols=allowed_cols
+        )
+
+        changes_df = cf['changes'][['delta']].copy()
+        changes_df['subjectID'] = ix
+        all_changes_list.append(changes_df.reset_index())
+
+    full_changes_df = pd.concat(all_changes_list, ignore_index=True)
+
+    return full_changes_df
+
+def run_single_subject_cf(subject_id: str, target_wlz_gain: float = 1.0):
+    """
+    purpose is so I can easily call the counterfactuals from the figure script
+    """
+    person = df_scaled.loc[subject_id]
+    wlz_std = wlz_std_original_units() 
+
+    target_delta_scaled = target_wlz_gain / wlz_std
+    cf = counterfactual_optimize_x(person, target_delta=target_delta_scaled, lam=5e-3, steps=400, lr=0.05, dummy_cols=DUMMY_COLS, allowed_cols=editable_cols)
+
+    # inverse scale results back to og units
+    wlz_idx = regression_cols.index('WLZ_WHZ_52')
+    wlz_mean = target_scaler.mean_[wlz_idx]
+    wlz_std = target_scaler.scale_[wlz_idx]
+
+    wlz_base_orig = cf['wlz_base'] * wlz_std + wlz_mean
+    wlz_cf_orig = cf['wlz_cf'] * wlz_std + wlz_mean
+    
+    return {'subject_id': subject_id,
+        'changes_df': cf['changes'],
+        'wlz_base': wlz_base_orig,
+        'wlz_cf': wlz_cf_orig
+    }
+
 # Main
 if __name__ == '__main__':
     # Baseline predictions
@@ -392,9 +474,6 @@ if __name__ == '__main__':
     og_unit_change = 1.0
     target_delta_scaled = og_unit_change / (wlz_std_original_units() or 1.0)
 
-    # remove microbiome diversity scores (anything that ends in 0 or 52) from editable columns
-    #editable_cols = [c for c in editable_cols if not (c.endswith('_0') or c.endswith('_52'))]
-
     cf = counterfactual_optimize_x(person, target_delta=target_delta_scaled, lam=5e-3, steps=400, lr=0.05, dummy_cols=DUMMY_COLS, allowed_cols=editable_cols)
 
     if target_scaler is not None:
@@ -414,6 +493,28 @@ if __name__ == '__main__':
     print(f"\nCounterfactual for {ix}: WLZ {wlz_base_orig:.3f} -> {wlz_cf_orig:.3f} (Δ {wlz_delta_orig:.3f}) [original units]")
     print("Top changed inputs (scaled units):")
     print(cf['changes'].head(15))
+
+    # Run the full population analysis
+    intervention_data = generate_population_optimization_results(
+        df=df_scaled,
+        target_wlz=-1,
+        dummy_cols=DUMMY_COLS,
+        allowed_cols=editable_cols
+    )
+    intervention_data.to_csv('Outcomes/population_wlz_deltas.tsv', sep='\t', header=True)
+
+    mean_abs_delta = intervention_data.groupby('feature')['delta'].apply(lambda x: x.abs().mean()).sort_values(ascending=False)
+
+    mean_delta = intervention_data.groupby('feature')['delta'].mean()
+
+    top_feature_summary = pd.DataFrame({
+        'mean_abs_delta': mean_abs_delta,
+        'mean_delta': mean_delta
+    }).loc[mean_abs_delta.index]
+
+    print('Top 20 features by mean abs change')
+    print(top_feature_summary.head(20))
+
     # Example grid over a continuous var
     # if 'Weight' in df_scaled.columns:
     #     deltas = np.linspace(-2, 2, 21)
