@@ -1,10 +1,15 @@
+# This script takes the preprocessed data (from format_matrix_og.py) and trains a VAE model on it. This script produces a general VAE that will go to outcome_heads* to train for specific outputs. 
+# Then that VAE with heads will be used to generate counterfactuals (what_if_counterfactuals.py)
+
+# The VAEworld class is imported into the outcome_heads* scripts.
+
 import pandas as pd
 import torch, pytorch_lightning as pl
 from sklearn.preprocessing import StandardScaler
-from torch import nn
+from torch import nn, save
 from torch.utils.data import TensorDataset, DataLoader
 pl.seed_everything(10)
-
+save = False
 
 # Load the data
 df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip.tsv', sep='\t', index_col=0)
@@ -22,6 +27,7 @@ BETA        = 1e-5
 BATCH_SIZE  = 256
 MAX_EPOCHS  = 400
 
+# generic VAE structure - multilayer encoder and decoder with reconstruction MSE and KL used for loss
 class VAEWorld(pl.LightningModule):
     def __init__(self, in_dim, latent, hidden):
         super().__init__()
@@ -87,26 +93,27 @@ class VAEWorld(pl.LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=1e-3)
     
-# BATCH_SIZE = min(256, len(dataset))
-# train_loader = DataLoader(dataset,
-#                           batch_size=BATCH_SIZE,
-#                           shuffle=True,
-#                           drop_last=False,
-#                           num_workers=0)    
+if __name__ == "__main__":
+    BATCH_SIZE = min(256, len(dataset))
+    train_loader = DataLoader(dataset,
+                            batch_size=BATCH_SIZE,
+                            shuffle=True,
+                            drop_last=False,
+                            num_workers=0)    
 
-# print(len(train_loader.dataset), BATCH_SIZE)
-# assert BATCH_SIZE >= 4
+    print(len(train_loader.dataset), BATCH_SIZE)
+    assert BATCH_SIZE >= 4
 
-# model = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM)
-# trainer = pl.Trainer(max_epochs=MAX_EPOCHS, accumulate_grad_batches=4,
-#                      accelerator='auto', devices='auto',
-#                      enable_progress_bar=True, gradient_clip_val=1.0, gradient_clip_algorithm='norm',)
-# trainer.fit(model, train_loader)
+    model = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM)
+    trainer = pl.Trainer(max_epochs=MAX_EPOCHS, accumulate_grad_batches=4,
+                        accelerator='auto', devices='auto',
+                        enable_progress_bar=True, gradient_clip_val=1.0, gradient_clip_algorithm='norm')
+    trainer.fit(model, train_loader)
 
-# model.eval()
-# with torch.no_grad():
-#     x_sample = X[:8]
-#     x_rec, _, _ = model(x_sample)
-#     print("Reconstruction MSE:", nn.functional.mse_loss(x_rec, x_sample).item())
-
-# torch.save(model.state_dict(), "vae_world_large_mam_nolip.pt")
+    model.eval()
+    with torch.no_grad():
+        x_sample = X[:8]
+        x_rec, _, _ = model(x_sample)
+        print("Reconstruction MSE:", nn.functional.mse_loss(x_rec, x_sample).item())
+    if save:
+        torch.save(model.state_dict(), "vae_world_large_mam_nolip.pt")

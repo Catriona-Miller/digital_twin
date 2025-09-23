@@ -1,5 +1,7 @@
+# This script formats the input data for the VAE model by imputing missing values and scaling the features. Different datasets combined.
+
 import pandas as pd
-from sklearn.experimental import enable_iterative_imputer  # Needed to enable IterativeImputer
+from sklearn.experimental import enable_iterative_imputer  # Needed to enable IterativeImputer (even though not called)
 from sklearn.impute import IterativeImputer, SimpleImputer
 from sklearn.preprocessing import StandardScaler
 import joblib
@@ -158,8 +160,9 @@ categorical_cols = ['Number_of_rooms_in_current_household'] + dummy_cols
 
 def impute_and_scale_df(df, categorical_cols=None):
     """
+    Imputes missing values for categorical and continuous variables separately and then scales them separately too
     df : DataFrame with subject_id as index
-    returns: imputed & z-scaled DataFrame (values stay scaled)
+    returns: imputed & z-scaled DataFrame (values stay scaled), scaler
     """
 
     continuous_cols = [col for col in df.columns if col not in categorical_cols]

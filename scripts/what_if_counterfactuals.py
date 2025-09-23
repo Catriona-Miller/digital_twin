@@ -5,6 +5,8 @@ import numpy as np
 from tqdm import tqdm
 from vae import VAEWorld
 from outcome_heads_nobrain import VAEWithHeads
+import joblib
+from itertools import product
 
 LATENT_DIM  = 64
 HIDDEN_DIM  = 1024
@@ -38,7 +40,7 @@ print("Heads load_state_dict missing keys:", missing)
 print("Heads load_state_dict unexpected keys:", unexpected)
 heads.eval()
 
-# Optional: target scaler for inverse-transform (if saved)
+# target scaler for inverse-transform
 target_scaler = ckpt.get('target_scaler', None)
 regression_cols = ckpt.get('regression_cols', ['cognitive_score_52', 'vocalisation_52', 'WLZ_WHZ_52'])
 
@@ -49,24 +51,28 @@ def detect_dummy_cols(df: pd.DataFrame):
 DUMMY_COLS = detect_dummy_cols(df_scaled)
 
 def group_onehots_by_prefix(dummy_cols, prefix: str):
-    # require prefix match safely; allow 'Feed' to match 'Feed_...'
+    # require prefix match safely and e.g. allow 'Feed' to match 'Feed_...'
     pfx = prefix if prefix.endswith('_') else prefix + '_'
     return [c for c in dummy_cols if c.startswith(pfx)]
 
 # Encoding and prediction
 @torch.no_grad()
 def encode_df(df: pd.DataFrame) -> torch.Tensor:
+    ''' Encode entire df in batches, return latent means only.'''
     vae.eval()
     zs = []
     for start in range(0, len(df), BATCH_SIZE):
         x = torch.tensor(df.iloc[start:start+BATCH_SIZE].values, dtype=torch.float32, device=DEVICE)
         mu, _ = vae.encode(x)
-        zs.append(mu)  # deterministic: use mean only
+        zs.append(mu)  # use mean only (don't sample here so don't need noise and sd)
     return torch.cat(zs, dim=0)
 
 @torch.no_grad()
 def predict_df(df: pd.DataFrame):
-    vae.eval(); heads.eval()
+    ''' Predict outcomes for entire df in batches, return scaled and inv-scaled (og units) DataFrames.
+    If no target_scaler was saved, inv-scaled will be same as scaled.'''
+    vae.eval()
+    heads.eval()
     frames = []
     for start in range(0, len(df), BATCH_SIZE):
         idx = df.index[start:start+BATCH_SIZE]
@@ -96,9 +102,12 @@ def apply_intervention(base_df: pd.DataFrame,
                        set_: dict | None = None,
                        onehot_sets: dict | None = None) -> pd.DataFrame:
     """
-    add:  {col: delta_in_scaled_units}
-    set_: {col: absolute_in_scaled_units}
-    onehot_sets: {prefix: chosen_col_name} (e.g., {'Feed': 'Feed_ERUSF (B)'})
+    This either adds an amount to or sets continuous features, and/or sets one-hot groups.
+    add:  dict of col: delta_in_scaled_units
+    set_: dict of col: absolute_in_scaled_units
+    onehot_sets: dict of prefix: chosen_col_name (e.g., {'Feed': 'Feed_ERUSF (B)'})
+
+    It then outputs a new DataFrame with the intervention applied.
     """
     df = base_df.copy()
     if add:
@@ -125,18 +134,18 @@ def population_effect(base_df: pd.DataFrame, add=None, set_=None, onehot_sets=No
     '''
     Estimate the population effect of an intervention by applying it to the base DataFrame
     and predicting the outcomes.
-    FINISH
+    Returns mean predicted outcomes (scaled and inv-scaled).
     '''
     df_int = apply_intervention(base_df, add=add, set_=set_, onehot_sets=onehot_sets)
-    preds_s, preds = predict_df(df_int)
-    return preds_s.mean().to_dict(), preds.mean().to_dict()
+    preds_s, preds_og = predict_df(df_int)
+    return preds_s.mean().to_dict(), preds_og.mean().to_dict()
 
 def grid_search_continuous(base_df: pd.DataFrame, sweep: dict):
     '''
-    Perform a grid search over continuous parameters.
-    FINISH
+    For a grid of continuous parameter values, estimate population effects.
+    sweep: dict of col: list_of_values_in_scaled_units
+    Returns a DataFrame with the results.
     '''
-    from itertools import product
     keys = list(sweep.keys())
     grids = list(product(*[sweep[k] for k in keys]))
     rows = []
@@ -150,10 +159,10 @@ def grid_search_mixed(base_df: pd.DataFrame,
                       continuous_set: dict[str, np.ndarray] | None,
                       onehot_choices: dict[str, list[str]] | None):
     '''
-    Perform a grid search over mixed parameters.
-    FINISH
+    Same as grid_search_continuous but also sweeps over one-hot group choices.
+    continuous_set: dict of col: list_of_values_in_scaled_units
+    onehot_choices: dict of prefix: list_of_chosen_col_names to oneshot between
     '''
-    from itertools import product
     cont_items = list((continuous_set or {}).items())
     cat_items  = list((onehot_choices or {}).items())
     cont_keys  = [k for k,_ in cont_items]
@@ -175,8 +184,10 @@ def grid_search_mixed(base_df: pd.DataFrame,
 
 # Diagnostics
 def input_sensitivity(df: pd.DataFrame, top_k=20) -> pd.Series:
-    # Computes average |d WLZ / d x| over a mini-batch
-    vae.eval(); heads.eval()
+    '''Computes average abs gradient over a mini-batch of inputs (batch_size).
+    Returns top_k features with highest abs grad.'''
+    vae.eval()
+    heads.eval()
     x = torch.tensor(df.iloc[:min(len(df), BATCH_SIZE)].values, dtype=torch.float32, device=DEVICE, requires_grad=True)
     mu, _ = vae.encode(x)
     z = mu
@@ -188,7 +199,10 @@ def input_sensitivity(df: pd.DataFrame, top_k=20) -> pd.Series:
     return pd.Series(grad[idx], index=df.columns[idx])
 
 def input_sensitivity_directional(df: pd.DataFrame, top_k=20) -> pd.Series:
-    vae.eval(); heads.eval()
+    '''Computes average gradient over a mini-batch of inputs (batch_size).
+    Returns top_k features with highest grad. (i.e. same as input_sensitivity but not abs)'''
+    vae.eval()
+    heads.eval()
     x = torch.tensor(df.iloc[:min(len(df), BATCH_SIZE)].values, dtype=torch.float32, device=DEVICE, requires_grad=True)
     mu, _ = vae.encode(x)
     z = mu
@@ -200,6 +214,12 @@ def input_sensitivity_directional(df: pd.DataFrame, top_k=20) -> pd.Series:
     return pd.Series(grad[idx], index=df.columns[idx])
 
 def diagnose_intervention(base_df: pd.DataFrame, set_: dict | None = None, add: dict | None = None):
+    '''Applies an intervention and reports (via print statement):
+    - Top 10 latent dimensions changed (mean |Δz|)
+    - Mean WLZ change (orig units)
+    Intervention can be 'set_' and/or 'add'  as in either add to a feature or set as a value. Can be multiple of either.
+    Returns the intervened DataFrame.
+    '''
     df_int = base_df.copy()
     for c, v in (set_ or {}).items():
         if c in df_int.columns:
@@ -214,6 +234,7 @@ def diagnose_intervention(base_df: pd.DataFrame, set_: dict | None = None, add: 
     top = np.argsort(-dz)[:10]
     preds0_s, preds0 = predict_df(base_df)
     preds1_s, preds1 = predict_df(df_int)
+    # change in WLZ from prediction based on og features to prediction based on intervened features
     wlz_delta = float((preds1['WLZ_WHZ_52'] - preds0['WLZ_WHZ_52']).mean())
 
     print("Top latent |Δz| dims:", list(zip(top.tolist(), dz[top].round(4).tolist())))
@@ -221,6 +242,11 @@ def diagnose_intervention(base_df: pd.DataFrame, set_: dict | None = None, add: 
     return df_int
 
 def individual_effects(base_df: pd.DataFrame, add=None, set_=None, onehot_sets=None, top_k=10):
+    '''
+    Applies an intervention and reports the top_k individuals with largest |WLZ delta| (orig units) from that intervention.
+    Returns a DataFrame with their baseline WLZ, counterfactual WLZ, and delta.
+    Intervention can be 'set_' and/or 'add' as in either add to a feature or set as a value. Can be multiple of either.
+    '''
     df_int = apply_intervention(base_df, add=add, set_=set_, onehot_sets=onehot_sets)
     _, base = predict_df(base_df)
     _, cf   = predict_df(df_int)
@@ -235,11 +261,15 @@ def individual_effects(base_df: pd.DataFrame, add=None, set_=None, onehot_sets=N
     return out
 
 def _project_binaries_inplace(x_tensor: torch.Tensor, cols: list[int]):
-    # clamp to [0,1] using .data to avoid autograd error
-    if len(cols) == 0: return
+    '''Clamp binary/dummy columns to [0,1] in-place so that they remain valid.
+    '''
+    if len(cols) == 0: 
+        return
     x_tensor.data[:, cols] = x_tensor.data[:, cols].clamp(0.0, 1.0)
 
 def _freeze_disallowed_inplace(x_tensor: torch.Tensor, x0_tensor: torch.Tensor, allowed_idx: list[int]):
+    '''For indices not in allowed_idx, set x_tensor to x0_tensor values in-place. These are the ones that aren't modifiable
+    '''
     all_idx = torch.arange(x_tensor.shape[1], device=x_tensor.device)
     mask = torch.ones_like(all_idx, dtype=torch.bool)
     mask[allowed_idx] = False
@@ -255,7 +285,7 @@ def counterfactual_optimize_x(row: pd.Series,
                               dummy_cols: list[str] | None = None,
                               allowed_cols: list[str] | None = None):
     """
-    Find x_cf close to x that changes WLZ by target_delta (orig units).
+    Find x_cf close to x that changes WLZ by target_delta.
     Works in scaled input space; returns df of x, x_cf, and prediction change.
     """
     vae.eval(); heads.eval()
@@ -269,14 +299,12 @@ def counterfactual_optimize_x(row: pd.Series,
     # which allowed to change
     allowed_indices = [row.index.get_loc(c) for c in (allowed_cols or []) if c in row.index]
 
-    # Compute current WLZ (orig units)
+    # Compute current WLZ
     with torch.no_grad():
         mu0, _ = vae.encode(x0)
         z0 = mu0
         y0_s = heads.reg_heads['WLZ_WHZ_52'](z0)
         y0 = y0_s.clone()
-        # If you saved a target scaler, inverse-transform here if needed.
-        # Assuming head already outputs in orig units per your setup.
 
     target = (y0 + target_delta).detach()
 
@@ -291,7 +319,7 @@ def counterfactual_optimize_x(row: pd.Series,
         opt.step()
         # keep binaries in [0,1]
         _project_binaries_inplace(x_cf, dummy_indices)
-        # freeze disallowed features
+        # freeze non-modifiable features
         if allowed_cols is not None:
             _freeze_disallowed_inplace(x_cf, x0, allowed_indices)
 
@@ -341,7 +369,8 @@ def generate_population_optimization_results(df: pd.DataFrame,
                                              allowed_cols: list[str] | None = None):
     """
     Runs counterfactual optimization for every individual in the dataframe to reach a target WLZ.
-    FINISH
+    Takes all individuals below target_wlz and tries to optimize them to reach target_wlz.
+    Returns a DataFrame with all changes made for all individuals. This df gets fed into make_figs.py functions
     """
     all_changes_list = []
 
@@ -350,7 +379,6 @@ def generate_population_optimization_results(df: pd.DataFrame,
     wlz_std = target_scaler.scale_[wlz_idx]
 
     # Get baseline predictions for everyone first to calculate target_delta efficiently
-    print("Calculating baseline predictions for the population...")
     _, preds_baseline_orig = predict_df(df)
     
     for ix, person in tqdm(df.iterrows(), total=len(df)):
@@ -377,7 +405,7 @@ def generate_population_optimization_results(df: pd.DataFrame,
             allowed_cols=allowed_cols
         )
 
-        changes_df = cf['changes'][['delta']].copy()
+        changes_df = cf['changes'].copy()
         changes_df['subjectID'] = ix
         all_changes_list.append(changes_df.reset_index())
 
@@ -387,7 +415,7 @@ def generate_population_optimization_results(df: pd.DataFrame,
 
 def run_single_subject_cf(subject_id: str, target_wlz_gain: float = 1.0):
     """
-    purpose is so I can easily call the counterfactuals from the figure script
+    purpose is just so I can easily call the counterfactuals from the figure script
     """
     person = df_scaled.loc[subject_id]
     wlz_std = wlz_std_original_units() 
@@ -409,90 +437,141 @@ def run_single_subject_cf(subject_id: str, target_wlz_gain: float = 1.0):
         'wlz_cf': wlz_cf_orig
     }
 
+def unscale_intervention_data(intervention_data: pd.DataFrame,
+                              combined_matrix_path: str = '../data/combined_matrix_large.tsv',
+                              scaler_path: str = '../data/scaler_large_nolip_psd.save') -> pd.DataFrame:
+    """
+    Convert x0/x_cf/delta from scaled units back to original units for non-categorical features.
+    Categorical are left unchanged.
+
+    intervention_data: DataFrame from generate_population_optimization_results() with columns ['subjectID','feature','x0','x_cf','delta'].
+    combined_matrix_path: Path to original (pre-impute/scale) combined matrix (tsv file).
+    scaler_path: Path to joblib'd StandardScaler fitted on continuous columns.
+
+    Returns df with added columns for og units ['x0_orig','x_cf_orig','delta_orig'].
+    """
+    combined_df = pd.read_csv(combined_matrix_path, sep='\t')
+    dummy_cols = [
+        col for col in combined_df.columns
+        if col != 'subjectID'
+        and combined_df[col].dropna().nunique() == 2
+        and set(combined_df[col].dropna().unique()) <= {0, 1}
+    ]
+    categorical_cols = ['Number_of_rooms_in_current_household'] + dummy_cols
+    # Preserve original column order used for fit_transform (see format_matrix_og.py)
+    continuous_cols = [c for c in combined_df.columns if c not in categorical_cols and c != 'subjectID']
+
+    # Load the fitted scaler and build feature (mean, std) maps
+    scaler = joblib.load(scaler_path)
+    means = dict(zip(continuous_cols, scaler.mean_))
+    scales = dict(zip(continuous_cols, scaler.scale_))
+
+    # Apply inverse transform per-row to get unscaled values
+    def _unscale_row(r: pd.Series) -> pd.Series:
+        feat = r['feature']
+        if feat in means:  # was scaled
+            m, s = means[feat], scales[feat]
+            return pd.Series({
+                'x0_orig':   r['x0'] * s + m,
+                'x_cf_orig': r['x_cf'] * s + m,
+                'delta_orig': r['delta'] * s
+            })
+        else:
+            # categorical/unscaled: pass-through
+            return pd.Series({
+                'x0_orig':   r['x0'],
+                'x_cf_orig': r['x_cf'],
+                'delta_orig': r['delta']
+            })
+
+    out = intervention_data.copy()
+    out[['x0_orig', 'x_cf_orig', 'delta_orig']] = out.apply(_unscale_row, axis=1)
+    return out
+
 # Main
 if __name__ == '__main__':
     # Baseline predictions
-    preds_s, preds = predict_df(df_scaled)
-    print("Baseline WLZ mean/std (orig units):",
-          float(preds['WLZ_WHZ_52'].mean()),
-          float(preds['WLZ_WHZ_52'].std()))
+    # preds_s, preds = predict_df(df_scaled)
+    # print("Baseline WLZ mean/std (orig units):",
+    #       float(preds['WLZ_WHZ_52'].mean()),
+    #       float(preds['WLZ_WHZ_52'].std()))
 
-    # Strong change on a continuous feature
-    some_cont = None
-    for c in df_scaled.columns:
-        if c not in DUMMY_COLS:
-            some_cont = c
-            break
-    if some_cont is not None:
-        df_jitter = df_scaled.copy()
-        df_jitter[some_cont] = df_jitter[some_cont] + 2.0
-        _, preds_j = predict_df(df_jitter)
-        print(f"WLZ mean delta after +2 on {some_cont}:",
-              float((preds_j['WLZ_WHZ_52'] - preds['WLZ_WHZ_52']).mean()))
+    # # Strong change on a continuous feature
+    # some_cont = None
+    # for c in df_scaled.columns:
+    #     if c not in DUMMY_COLS:
+    #         some_cont = c
+    #         break
+    # if some_cont is not None:
+    #     df_jitter = df_scaled.copy()
+    #     df_jitter[some_cont] = df_jitter[some_cont] + 2.0
+    #     _, preds_j = predict_df(df_jitter)
+    #     print(f"WLZ mean delta after +2 on {some_cont}:",
+    #           float((preds_j['WLZ_WHZ_52'] - preds['WLZ_WHZ_52']).mean()))
 
-    # Latent perturbation sensitivity
-    with torch.no_grad():
-        x = torch.tensor(df_scaled.values[:min(1024, len(df_scaled))], dtype=torch.float32, device=DEVICE)
-        mu, _ = vae.encode(x)
-        z = mu
-        z_pert = z.clone()
-        z_pert[:, 0] += 2.0
-        wlz0 = heads.reg_heads['WLZ_WHZ_52'](z).squeeze(1).cpu().numpy()
-        wlz1 = heads.reg_heads['WLZ_WHZ_52'](z_pert).squeeze(1).cpu().numpy()
-        print("WLZ mean delta after latent[0] += 2:",
-              float((wlz1 - wlz0).mean()))
+    # # Latent perturbation sensitivity
+    # with torch.no_grad():
+    #     x = torch.tensor(df_scaled.values[:min(1024, len(df_scaled))], dtype=torch.float32, device=DEVICE)
+    #     mu, _ = vae.encode(x)
+    #     z = mu
+    #     z_pert = z.clone()
+    #     z_pert[:, 0] += 2.0
+    #     wlz0 = heads.reg_heads['WLZ_WHZ_52'](z).squeeze(1).cpu().numpy()
+    #     wlz1 = heads.reg_heads['WLZ_WHZ_52'](z_pert).squeeze(1).cpu().numpy()
+    #     print("WLZ mean delta after latent[0] += 2:",
+    #           float((wlz1 - wlz0).mean()))
 
 
-    # Input sensitivity ranking
-    print("\nTop input sensitivities (|d WLZ / d x|):")
-    print(input_sensitivity_directional(df_scaled, top_k=20))
+    # # Input sensitivity ranking
+    # print("\nTop input sensitivities (|d WLZ / d x|):")
+    # print(input_sensitivity_directional(df_scaled, top_k=20))
 
-    # Diagnose a named intervention
-    if 'Weight' in df_scaled.columns:
-        _ = diagnose_intervention(df_scaled, set_={'Weight': df_scaled['Weight'].mean() + 2.0})
+    # # Diagnose a named intervention
+    # if 'Weight' in df_scaled.columns:
+    #     _ = diagnose_intervention(df_scaled, set_={'Weight': df_scaled['Weight'].mean() + 2.0})
 
-    # enforce a one-hot group toggle (Feed) if present
-    feed_group = group_onehots_by_prefix(DUMMY_COLS, 'Feed')
-    if feed_group:
-        chosen = feed_group[0]  # choose any available feed category
-        df_feed = apply_intervention(df_scaled, onehot_sets={'Feed': chosen})
-        _, preds_feed = predict_df(df_feed)
-        delta = preds_feed['WLZ_WHZ_52'] - preds['WLZ_WHZ_52']
-        print(f"WLZ mean delta after forcing {chosen}:", float(delta.mean()), "std:", float(delta.std()))
+    # # enforce a one-hot group toggle (Feed) if present
+    # feed_group = group_onehots_by_prefix(DUMMY_COLS, 'Feed')
+    # if feed_group:
+    #     chosen = feed_group[0]  # choose any available feed category
+    #     df_feed = apply_intervention(df_scaled, onehot_sets={'Feed': chosen})
+    #     _, preds_feed = predict_df(df_feed)
+    #     delta = preds_feed['WLZ_WHZ_52'] - preds['WLZ_WHZ_52']
+    #     print(f"WLZ mean delta after forcing {chosen}:", float(delta.mean()), "std:", float(delta.std()))
 
-    #  who responds most to a given intervention
-    if 'Weight' in df_scaled.columns:
-        top = individual_effects(df_scaled, set_={'Weight': df_scaled['Weight'].mean() + 2.0}, top_k=10)
-        print("\nTop 10 individual WLZ deltas for Weight+2 (orig units):")
-        print(top)
+    # #  who responds most to a given intervention
+    # if 'Weight' in df_scaled.columns:
+    #     top = individual_effects(df_scaled, set_={'Weight': df_scaled['Weight'].mean() + 2.0}, top_k=10)
+    #     print("\nTop 10 individual WLZ deltas for Weight+2 (orig units):")
+    #     print(top)
 
-    # Counterfactual optimization on a single person
-    ix = np.random.choice(df_scaled.index)
-    person = df_scaled.loc[ix]
-    DUMMY_COLS = [c for c in df_scaled.columns if df_scaled[c].dropna().isin([0,1]).all()]
+    # # Counterfactual optimization on a single person
+    # ix = np.random.choice(df_scaled.index)
+    # person = df_scaled.loc[ix]
+    # DUMMY_COLS = [c for c in df_scaled.columns if df_scaled[c].dropna().isin([0,1]).all()]
 
-    og_unit_change = 1.0
-    target_delta_scaled = og_unit_change / (wlz_std_original_units() or 1.0)
+    # og_unit_change = 1.0
+    # target_delta_scaled = og_unit_change / (wlz_std_original_units() or 1.0)
 
-    cf = counterfactual_optimize_x(person, target_delta=target_delta_scaled, lam=5e-3, steps=400, lr=0.05, dummy_cols=DUMMY_COLS, allowed_cols=editable_cols)
+    # cf = counterfactual_optimize_x(person, target_delta=target_delta_scaled, lam=5e-3, steps=400, lr=0.05, dummy_cols=DUMMY_COLS, allowed_cols=editable_cols)
 
-    if target_scaler is not None:
-        try:
-            wlz_idx = regression_cols.index('WLZ_WHZ_52')
-            wlz_mean = target_scaler.mean_[wlz_idx]
-            wlz_std = target_scaler.scale_[wlz_idx]
-            wlz_base_orig = cf['wlz_base'] * wlz_std + wlz_mean
-            wlz_cf_orig = cf['wlz_cf'] * wlz_std + wlz_mean
-            wlz_delta_orig = cf['wlz_delta'] * wlz_std
-        except (ValueError, IndexError):
-            print("Warning: Could not find 'WLZ_WHZ_52' in target_scaler columns. Using scaled values.")
-            wlz_base_orig = cf['wlz_base']
-            wlz_cf_orig = cf['wlz_cf']
-            wlz_delta_orig = cf['wlz_delta']
+    # if target_scaler is not None:
+    #     try:
+    #         wlz_idx = regression_cols.index('WLZ_WHZ_52')
+    #         wlz_mean = target_scaler.mean_[wlz_idx]
+    #         wlz_std = target_scaler.scale_[wlz_idx]
+    #         wlz_base_orig = cf['wlz_base'] * wlz_std + wlz_mean
+    #         wlz_cf_orig = cf['wlz_cf'] * wlz_std + wlz_mean
+    #         wlz_delta_orig = cf['wlz_delta'] * wlz_std
+    #     except (ValueError, IndexError):
+    #         print("Warning: Could not find 'WLZ_WHZ_52' in target_scaler columns. Using scaled values.")
+    #         wlz_base_orig = cf['wlz_base']
+    #         wlz_cf_orig = cf['wlz_cf']
+    #         wlz_delta_orig = cf['wlz_delta']
 
-    print(f"\nCounterfactual for {ix}: WLZ {wlz_base_orig:.3f} -> {wlz_cf_orig:.3f} (Δ {wlz_delta_orig:.3f}) [original units]")
-    print("Top changed inputs (scaled units):")
-    print(cf['changes'].head(15))
+    # print(f"\nCounterfactual for {ix}: WLZ {wlz_base_orig:.3f} -> {wlz_cf_orig:.3f} (Δ {wlz_delta_orig:.3f}) [original units]")
+    # print("Top changed inputs (scaled units):")
+    # print(cf['changes'].head(15))
 
     # Run the full population analysis
     intervention_data = generate_population_optimization_results(
@@ -501,7 +580,11 @@ if __name__ == '__main__':
         dummy_cols=DUMMY_COLS,
         allowed_cols=editable_cols
     )
-    intervention_data.to_csv('Outcomes/population_wlz_deltas.tsv', sep='\t', header=True)
+    # for outputting intervention_data, want only feature, delta, subjectID for make_figs.py input
+    intervention_data_out = intervention_data[['feature', 'delta', 'subjectID']]
+    #intervention_data_out.to_csv('../Outcomes/population_wlz_deltas_neg1.tsv', sep='\t', header=True)
+    intervention_data_orig = unscale_intervention_data(intervention_data)
+    intervention_data_orig.to_csv('../Outcomes/test_input_original_units.tsv', sep='\t', index=False)
 
     mean_abs_delta = intervention_data.groupby('feature')['delta'].apply(lambda x: x.abs().mean()).sort_values(ascending=False)
 
@@ -514,7 +597,6 @@ if __name__ == '__main__':
 
     print('Top 20 features by mean abs change')
     print(top_feature_summary.head(20))
-
     # Example grid over a continuous var
     # if 'Weight' in df_scaled.columns:
     #     deltas = np.linspace(-2, 2, 21)
