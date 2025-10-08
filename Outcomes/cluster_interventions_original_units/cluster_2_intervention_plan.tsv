@@ -1,0 +1,74 @@
+feature	required_change_original_units
+4-pyridoxic_acid	2.434851049324427
+Bedtime_difficulty	-1.0383441273529468
+Chair_No	-0.6515800876904763
+Chair_Yes	-0.8829381523076923
+Cooking_gas_No	1.027996937917971
+Cooking_gas_Yes	-0.515442251125
+Household_food_availability_Deficit in whole year	1.0082430676679541
+Household_food_availability_Neither deficit nor surplus	1.1771461645045669
+Household_food_availability_Sometimes deficit	-0.5462122574210526
+Household_food_availability_Surplus	1.2589619602463262
+Night_sleep	-1.5881723516443498
+Open_drain_beside_house_No	1.1307349344940472
+Open_drain_beside_house_Yes	-0.5289728035066666
+Principal_roofing_material_Finished roof (concrete)	1.1405562817847335
+Principal_roofing_material_Tin roof	1.1451269389277259
+Principal_type_of_toilet_facility_used_by_household_members_Pit latrine	1.041345046198512
+Principal_type_of_toilet_facility_used_by_household_members_Septic tank or toilet	1.2024716684700012
+Principal_type_of_toilet_facility_used_by_household_members_Water-sealed or slab latrine	1.2534868281765406
+Tabletop_No	-0.39181405317764706
+Tabletop_Yes	1.0936919368029208
+Toilet_facility_shared_with_other_households_No	0.8760488520487286
+Toilet_facility_shared_with_other_households_Yes	1.1620800616224087
+Working_TV_No	1.2485021900867852
+Working_TV_Yes	-0.7823223963904763
+alanine	-141.89301660258783
+arginine	-30.385730006784215
+asparagine	24.817920980127656
+aspartic_acid	-3.573226678384326
+both_before_eating	-0.49604708938095227
+both_before_feeding_child	-0.4047164004375
+citrulline	19.430959354522905
+cooking_indoors	0.9684660334562825
+cooking_outside	1.3135993027119692
+glutamic_acid	-18.367363331303107
+glutamine	312.374228464219
+glycine	-80.31139626501773
+histidine	32.496573857773505
+hydroxyproline	26.364284639422788
+isoleucine	37.39623286492274
+leucine	55.933385011319544
+lysine	-56.40524383360522
+methionine	-7.873876911956961
+nicotinamide	-0.6857652422783808
+ornithine	37.16201182625386
+pantothenic_acid	2.1546055761175844
+pc1	86.47988500528382
+pc10	-4.565783738306256
+pc2	23.386878274453707
+pc3	10.654906564037372
+pc4	10.268212340643434
+pc5	-4.114587786967441
+pc6	-8.642446592875086
+pc7	10.215914285435787
+pc8	8.695771863917425
+pc9	7.423670518524187
+phenylalanine	-30.883060153481598
+proline	194.42427453572756
+riboflavin	227.3133954050175
+right_hand_before_eating	1.1187402861316706
+right_hand_before_feeding_child	1.2414811327196769
+serine	-35.88170809457556
+soap_after_defecating	-0.39308271386666666
+soap_before_eating	1.087530918643865
+soap_before_feeding_child	1.179917987443011
+taurine	-33.30613464950375
+threonine	-58.557573253299545
+tmao	204.27754486062986
+trytophan	-22.678342819130762
+tyrosine	-34.52421780242545
+valine	-55.702043839468246
+water_after_defecating	0.7978035613429499
+water_before_eating	1.1067670855219855
+water_before_feeding_child	1.1432996214775155
