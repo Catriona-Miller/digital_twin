@@ -192,7 +192,7 @@ combined_imputed_scaled, fitted_scaler = impute_and_scale_df(combined_df.set_ind
 #joblib.dump(fitted_scaler, '../data/scaler_large_nolip_psd.save')
 
 # also save a file with just the editable ones for what if scenarios
-editable_sources = [household_data, sanitation_data, microbiome_data, aa_data, vitamin_data, sleep_data]
-editable_cols = [col for df in editable_sources for col in df.columns if col != 'subjectID']
+# editable_sources = [household_data, sanitation_data, microbiome_data, aa_data, vitamin_data]
+# editable_cols = [col for df in editable_sources for col in df.columns if col != 'subjectID']
 
-combined_imputed_scaled[editable_cols].to_csv('../data/combined_imputed_scaled_large_nolip_editable.tsv', sep='\t', index=True)
+# combined_imputed_scaled[editable_cols].to_csv('../data/combined_imputed_scaled_large_nolip_sleep_editable.tsv', sep='\t', index=True)

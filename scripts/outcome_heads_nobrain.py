@@ -171,15 +171,12 @@ if __name__ == "__main__":
         print(f"  Min: {targets[col].min():.3f}")
         print(f"  Max: {targets[col].max():.3f}")
 
-    #targets_scaled.to_csv('../data/targets_scaled.tsv', sep='\t', index=True)
-
     common_idx = targets.index.intersection(df_scaled.index)
     targets_scaled = targets.loc[common_idx]
     df_scaled = df_scaled.loc[common_idx]
 
     joined = df_scaled.join(targets)
     joined = joined.dropna(subset=regression_cols)
-
 
     groups = joined.index
     # First split: 70 % train vs 30 % (temp)
@@ -229,7 +226,6 @@ if __name__ == "__main__":
     for p in model_heads.vae.parameters():
         p.requires_grad = False
 
-
     trainer = pl.Trainer(
         max_epochs=400,
         log_every_n_steps=1,
@@ -260,7 +256,6 @@ if __name__ == "__main__":
         'regression_cols': regression_cols,
         'validation_metrics': trainer.callback_metrics
     }
-
 
     # Save with timestamp and metrics
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')

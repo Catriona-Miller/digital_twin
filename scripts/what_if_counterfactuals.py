@@ -584,7 +584,7 @@ if __name__ == '__main__':
     intervention_data_out = intervention_data[['feature', 'delta', 'subjectID']]
     #intervention_data_out.to_csv('../Outcomes/population_wlz_deltas_neg1.tsv', sep='\t', header=True)
     intervention_data_orig = unscale_intervention_data(intervention_data)
-    intervention_data_orig.to_csv('../Outcomes/test_input_original_units.tsv', sep='\t', index=False)
+    #intervention_data_orig.to_csv('../Outcomes/test_input_original_units.tsv', sep='\t', index=False)
 
     mean_abs_delta = intervention_data.groupby('feature')['delta'].apply(lambda x: x.abs().mean()).sort_values(ascending=False)
 
@@ -597,6 +597,28 @@ if __name__ == '__main__':
 
     print('Top 20 features by mean abs change')
     print(top_feature_summary.head(20))
+
+    # apply average changes to population and see WLZ effect
+    # id those below target wlz
+    _, preds_base = predict_df(df_scaled)
+    base_below = df_scaled.loc[preds_base['WLZ_WHZ_52'] < -1.0]
+    # apply mean changes to editable features for these indivs
+    df_below_int = base_below.copy()
+    for feat, row in mean_delta.items():
+        if feat in df_below_int.columns:
+            if feat in DUMMY_COLS:
+                # round to nearest int and clamp to [0,1]
+                df_below_int[feat] = (df_below_int[feat] + row).round().clip(0, 1)
+            else:
+                df_below_int[feat] = df_below_int[feat] + row
+    # predict new WLZ
+    _, preds_below_int = predict_df(df_below_int)
+
+    # count how many now above -1.0
+    new_above = (preds_below_int['WLZ_WHZ_52'] >= -1.0).sum()
+    total_below = len(base_below)
+    print(f"\nAfter applying mean changes to those below -1.0 WLZ, {new_above} out of {total_below} are now above -1.0.")
+
     # Example grid over a continuous var
     # if 'Weight' in df_scaled.columns:
     #     deltas = np.linspace(-2, 2, 21)
