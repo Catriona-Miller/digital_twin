@@ -1,3 +1,5 @@
+# This is the final script. It calculates cluster specific changes based on the average changes in clusters from what_if_counterfactuals.py
+
 import pandas as pd
 import numpy as np
 import torch
@@ -5,6 +7,15 @@ import joblib
 import os
 
 from what_if_counterfactuals import predict_df
+
+save_recipe = False
+save_aa_ranges = False
+
+selected_features = [
+    'leucine', 'pc6', 'pc2', 'tyrosine', 'isoleucine',
+    'aspartic_acid', 'methionine', 'glutamine', 'taurine', 'tmao'
+]
+restrict_to_selected_features = False
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -92,26 +103,24 @@ for cluster_num, cluster_df in grouped_profiles:
         num_positive = (deltas > 0).sum()
         proportion_positive = num_positive / len(deltas)
 
-        # Apply the sign consistency logic
+        # check if mostly positive or negative
         if proportion_positive >= CONSENSUS_THRESHOLD:
-            # Strong consensus for an INCREASE
             mean_increase = deltas[deltas > 0].mean()
             std_increase = deltas[deltas > 0].std()
             smart_archetype[feature] = mean_increase + 1.5*std_increase
         elif (1 - proportion_positive) >= CONSENSUS_THRESHOLD:
-            # Strong consensus for a DECREASE
             smart_archetype[feature] = deltas[deltas < 0].mean()
         else:
-            # No consensus, so this feature is not part of the group intervention
+            # don't change if doesn't go one way or the other
             smart_archetype[feature] = 0
             
-    # Add the completed archetype recipe to our list
+    # Add the completed recipe to list
     archetype_interventions_list.append(pd.Series(smart_archetype, name=cluster_num))
 
-# Combine the list of series into a final DataFrame
+# Combine the list of series into a final df
 archetype_interventions = pd.DataFrame(archetype_interventions_list)
 
-print("Your 4 NEW Sign-Consistent Intervention Archetypes:")
+print("four cluster types:")
 print(archetype_interventions)
 
 
@@ -123,6 +132,12 @@ for cluster_num in archetype_interventions.index:
 
     # Get the intervention recipe for the current cluster
     cluster_delta = archetype_interventions.loc[cluster_num]
+
+    if restrict_to_selected_features:
+        cluster_delta = cluster_delta.copy()
+        for feat in cluster_delta.index:
+            if feat not in selected_features:
+                cluster_delta[feat] = 0
 
     # Create a copy to store the unscaled values
     unscaled_archetype = cluster_delta.copy()
@@ -136,16 +151,16 @@ for cluster_num in archetype_interventions.index:
     unscaled_archetype_to_save = unscaled_archetype[unscaled_archetype != 0].reset_index()
     unscaled_archetype_to_save.columns = ['feature', 'required_change_original_units']
     
-    # Save the unscaled intervention to its own TSV file
-    file_path = os.path.join(output_dir, f'cluster_{cluster_num}_intervention_plan.tsv')
-    unscaled_archetype_to_save.to_csv(file_path, sep='\t', index=False)
+    # Save the unscaled intervention to its own tsv file
+    if save_recipe:
+        file_path = os.path.join(output_dir, f'cluster_{cluster_num}_intervention_plan.tsv')
+        unscaled_archetype_to_save.to_csv(file_path, sep='\t', index=False)
 
 
     # Apply this cluster to the whole base_below group
     df_below_int = base_below.copy()
     for feat, change_value in cluster_delta.items():
         if feat in df_below_int.columns:
-            # Add logic for dummy/continuous columns if needed
             df_below_int[feat] = df_below_int[feat] + change_value
 
     # Predict and count the recovered
@@ -158,12 +173,8 @@ for cluster_num in archetype_interventions.index:
     
     # Get the subjectIDs that originally belong to this cluster
     subjects_in_cluster = intervention_profiles[intervention_profiles['cluster_id'] == cluster_num].index
-    
-    # Find which of these subjects were in the 'at-risk' (base_below) group
     at_risk_in_cluster = base_below.index.intersection(subjects_in_cluster)
     total_at_risk_in_cluster = len(at_risk_in_cluster)
-
-    # See how many of the recovered subjects belong to this cluster
     recovered_in_cluster = recovered_all.index.intersection(at_risk_in_cluster)
     num_recovered_in_cluster = len(recovered_in_cluster)
 
@@ -172,9 +183,6 @@ for cluster_num in archetype_interventions.index:
     num_recovered_unrecovered_in_cluster = len(recovered_unrecovered_in_cluster)
     total_unrecovered_in_cluster = len(unrecovered_in_cluster)
 
-    #print(f"\n--- Results for Cluster {cluster_num} ---")
-    #print(f"Overall Recovery: {total_newly_recovered} out of {len(base_below)} people recovered.")
-    #print(f"Cluster {cluster_num}: {num_recovered_in_cluster} recovered out of {total_at_risk_in_cluster} at-risk individuals.")
     print(f"Cluster {cluster_num}: {num_recovered_unrecovered_in_cluster} of {total_unrecovered_in_cluster} ({(num_recovered_unrecovered_in_cluster/total_unrecovered_in_cluster*100 if total_unrecovered_in_cluster else 0):.2f}%) unrecovered individuals recovered with the intervention change.")
 
 
@@ -192,45 +200,34 @@ all_profiles = intervention_data.pivot_table(
     values='delta'
 ).fillna(0)
 
-# Filter these profiles to only include the at-risk individuals
-at_risk_profiles = all_profiles.loc[base_below.index]
-
-# Define the consensus threshold
+# Filter these profiles to only include the unrecovered individuals
+unrecovered_profiles = all_profiles.loc[base_below.index]
+# code is same as cluster specific just for everyone in one
 CONSENSUS_THRESHOLD = 0.4
 
-# This will store our final, overall intervention recipe
 overall_smart_archetype = {}
 
-# Calculate the smart average for each feature
-for feature in at_risk_profiles.columns:
+for feature in unrecovered_profiles.columns:
     
-    # Isolate the deltas for this feature, excluding zeros
-    deltas = at_risk_profiles[feature][at_risk_profiles[feature] != 0]
-    
+    deltas = unrecovered_profiles[feature][unrecovered_profiles[feature] != 0]
+
     if deltas.empty:
         overall_smart_archetype[feature] = 0
         continue
 
-    # Calculate the proportion of people needing an INCREASE
+    # Calculate the proportion of people needing an inc
     proportion_positive = (deltas > 0).sum() / len(deltas)
 
-    # Apply the sign consistency logic
+
     if proportion_positive >= CONSENSUS_THRESHOLD:
-        # If consensus is to INCREASE, average only the positive changes
         overall_smart_archetype[feature] = deltas[deltas > 0].mean()
     elif (1 - proportion_positive) >= CONSENSUS_THRESHOLD:
-        # If consensus is to DECREASE, average only the negative changes
         overall_smart_archetype[feature] = deltas[deltas < 0].mean()
     else:
-        # If there's no consensus, this change is set to zero
         overall_smart_archetype[feature] = 0
 
-# Convert the dictionary to a Pandas Series for easier use
 overall_archetype_series = pd.Series(overall_smart_archetype)
 
-print("Calculated the overall sign-consistent intervention.")
-
-# Create a copy of the at-risk group to modify
 df_below_int = base_below.copy()
 
 # Apply the calculated changes
@@ -244,9 +241,26 @@ _, preds_below_int = predict_df(df_below_int)
 # Count how many are now at or above the -1.0 threshold
 num_recovered = (preds_below_int['WLZ_WHZ_52'] >= thresh).sum()
 
-# get just these in preds_below_int
 recovered_in_preds = preds_below_int.loc[preds_below_int.index.intersection(unrecovered_ids)]
 num_recovered_would_have = (recovered_in_preds['WLZ_WHZ_52'] >= thresh).sum()
 print(f"{num_recovered_would_have} of {len(unrecovered_ids)} ({num_recovered_would_have/len(unrecovered_ids)*100:.2f}%) unrecovered individuals recovered with the intervention change.")
 
-# check which clusters they were from
+# for the clusters, save a tsv file with the amino acid ranges for each cluster
+aa_data = pd.read_csv('../data/aa.tsv', sep='\t')
+# for aa_data, only keep _0 rows
+aa_data = aa_data[aa_data['sampleID'].str.endswith('_0')].copy()
+# remove the timepoint from sampleID
+aa_data['subjectID'] = aa_data['sampleID'].str.replace('_0', '', regex=False)
+aa_data.drop(columns=['sampleID'], inplace=True)
+# add the cluster assignments to aa_data
+aa_data = aa_data.join(clusters.set_index('subjectID'), on='subjectID', how='inner')
+# for each cluster, get the min and max of each amino acid
+for cluster_num, cluster_df in aa_data.groupby('cluster_id'):
+    aa_ranges = {}
+    for col in aa_data.columns:
+        if col not in ['subjectID', 'cluster_id']:
+            aa_ranges[col] = (cluster_df[col].min(), cluster_df[col].max())
+    aa_ranges_df = pd.DataFrame(aa_ranges, index=['min', 'max']).T
+    file_path = os.path.join(output_dir, f'cluster_{cluster_num}_amino_acid_ranges.tsv')
+    if save_aa_ranges:
+        aa_ranges_df.to_csv(file_path, sep='\t', index=True)

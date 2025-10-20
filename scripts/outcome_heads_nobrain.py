@@ -179,17 +179,17 @@ if __name__ == "__main__":
     joined = joined.dropna(subset=regression_cols)
 
     groups = joined.index
-    # First split: 70 % train vs 30 % (temp)
+    # First split is 70 % train vs 30 % (temp)
     gss1 = GroupShuffleSplit(n_splits=1, test_size=0.30, random_state=10)
     train_idx, temp_idx = next(gss1.split(groups, groups=groups))
 
-    # Second split: split the 30 % temp into val / test (50 % each)
+    # Second split is the 30 % temp into val / test (50 % each so 15/15)
     gss2 = GroupShuffleSplit(n_splits=1, test_size=0.50, random_state=10)
     val_idx, test_idx = next(gss2.split(groups[temp_idx], groups=groups[temp_idx]))
 
     # Map back to the original indices
-    train_idx = train_idx                # already global
-    val_idx   = temp_idx[val_idx]        # translate relative → absolute
+    #train_idx = train_idx
+    val_idx   = temp_idx[val_idx]        # translate relative to absolute
     test_idx  = temp_idx[test_idx]
 
     def make_tensors(idx):

@@ -1,3 +1,4 @@
+# figure functions to make plots based on outputs from what_if_counterfactuals.py. Ones in paper are create_population_fig and create_full_clustermap_clusters
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -10,7 +11,7 @@ from statannotations.Annotator import Annotator
 
 def create_population_fig(intervention_data):
     '''
-    Creates a combined bar and strip plot to visualize both
+    Creates a combined bar and strip plot to visualise both
     population-level average interventions required and individual-level variations.
     Displays the top 10 features with the highest mean absolute delta. Everything in z-scaled units
     '''
@@ -55,61 +56,13 @@ def create_population_fig(intervention_data):
         alpha=0.5
     )
 
-    # ax.set_title('Population Average and Individual Personalisation', fontsize=16, fontweight='bold', pad=20)
-    ax.set_xlabel('Recommended Change (Δ) in Scaled Units', fontsize=12)
+    ax.set_xlabel('Recommended Change in Scaled Units', fontsize=12)
     ax.set_ylabel('Feature', fontsize=12)
     ax.axvline(0, color='black', linewidth=0.8)
     handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles, labels, title='Dominant Direction')
 
     plt.tight_layout()
-    fig.savefig('../Outcomes/figure_combined_neg1.png', dpi=300, bbox_inches='tight')
-
-def create_individual_heatmap(intervention_data: pd.DataFrame, top_n_features: int = 20, n_individuals: int = 15):
-    """
-    Generates a clustered heatmap showing personalized intervention "fingerprints"
-    for a selection of individuals.
-    """
-
-    mean_abs_delta = intervention_data.groupby('feature')['delta'].apply(lambda x: x.abs().mean())
-    top_features = mean_abs_delta.nlargest(top_n_features).index.tolist()
-
-    # Select a random set of individuals
-    subject_ids = intervention_data['subjectID'].unique()
-    np.random.seed(10)
-    selected_subjects = np.random.choice(subject_ids, size=n_individuals, replace=False)
-
-    heatmap_data = intervention_data[
-        (intervention_data['subjectID'].isin(selected_subjects)) &
-        (intervention_data['feature'].isin(top_features))
-    ]
-
-    heatmap_matrix = heatmap_data.pivot(
-        index='subjectID',
-        columns='feature',
-        values='delta'
-    )
-    heatmap_matrix = heatmap_matrix[top_features]
-    heatmap_matrix = heatmap_matrix.fillna(0) 
-
-    plt.style.use('seaborn-v0_8-whitegrid')
-    
-    g = sns.clustermap(
-        heatmap_matrix,
-        method='ward',   
-        cmap='vlag',   
-        center=0,          
-        figsize=(15, 10),
-        linewidths=.75,
-        cbar_kws={'label': 'Recommended Change (Δ)'}
-    )
-
-    g.ax_heatmap.set_xlabel('Top 10 Features', fontsize=12, fontweight='bold')
-    g.ax_heatmap.set_ylabel('Individuals', fontsize=12, fontweight='bold')
-    g.ax_heatmap.set_title('Personalised Intervention Requirements', fontsize=16, fontweight='bold', pad=20)
-    
-    plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90)
-    g.savefig('../Outcomes/individuals_heatmap_1.png', dpi=300, bbox_inches='tight')
+    fig.savefig('../Outcomes/figure_combined_neg1.pdf', format='pdf', dpi=450, bbox_inches='tight')
 
 def create_radar_plot(intervention_data: pd.DataFrame, top_n_features: int = 8):
     """
@@ -163,7 +116,7 @@ def create_radar_plot(intervention_data: pd.DataFrame, top_n_features: int = 8):
     circle_angles = np.linspace(0, 2 * np.pi, 100)
     # Draw the circle at radius 0
     ax.plot(circle_angles, [0] * 100, color='black', linewidth=1)   
-    plt.title('Personalized Intervention Radar for Three Individuals', size=20, color='black', y=1.1)
+    plt.title('Personalised Intervention Radar for Three Individuals', size=20, color='black', y=1.1)
     plt.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1))
 
     plt.savefig('../Outcomes/figure_radar_plot_three_1.png', dpi=300, bbox_inches='tight')
@@ -195,21 +148,19 @@ def create_full_clustermap(intervention_data: pd.DataFrame, top_n_features: int 
         center=0,
         figsize=(7, 9),
         yticklabels=False,
-        cbar_kws={'label': 'Recommended Change (Δ)'}
+        cbar_kws={'label': 'Recommended Change'}
     )
-
-    #g.ax_heatmap.set_title('Population-wide Intervention Patterns', fontsize=16, fontweight='bold', pad=20)
     g.ax_heatmap.set_xlabel('Top 10 Features', fontsize=10, fontweight='bold')
     g.ax_heatmap.set_ylabel('') 
     
     plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90)
-    g.savefig('../Outcomes/figure_full_clustermap_neg1.png', dpi=300, bbox_inches='tight')
+    g.savefig('../Outcomes/figure_full_clustermap_neg1.svg', format='svg', dpi=450, bbox_inches='tight')
 
 
 def create_full_clustermap_clusters(intervention_data: pd.DataFrame, top_n_features: int = 10, n_clusters: int = 4):
     """
-    Same as above, just outputs the cluster assignments (four clusters) to tsv and adds colour on size
-    SHould just combine both functions and make tsv output optional but haven't yet
+    Same as above, just outputs the cluster assignments (four clusters) to tsv and adds colour on side
+    Should just combine both functions and make tsv output optional but haven't yet...
     """
 
     mean_abs_delta = intervention_data.groupby('feature')['delta'].apply(lambda x: x.abs().mean())
@@ -240,29 +191,26 @@ def create_full_clustermap_clusters(intervention_data: pd.DataFrame, top_n_featu
         figsize=(16, 12),
         yticklabels=False,
         row_colors=row_colours,
-        cbar_kws={'label': 'Recommended Change (Δ)'}
+        cbar_kws={'label': 'Recommended Change (Delta)'}
     )
 
     # Create and add the legend for the clusters
     legend_patches = [Patch(facecolor=colour, edgecolor='black', label=f'Cluster {label}') 
                       for label, colour in lut.items()]
-    # plt.legend(handles=legend_patches, bbox_to_anchor=(0.01, 0.01), loc='lower left', 
-    #            title='Cluster Assignments', frameon=True)
 
-    #g.fig.suptitle('Full Population Intervention Clusters', fontsize=16, fontweight='bold')
     g.ax_heatmap.set_xlabel('Top 10 Features', fontsize=12, fontweight='bold')
     g.ax_heatmap.set_ylabel('')
     plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90)
-    
-    g.savefig('../Outcomes/figure_full_clustermap_clusters.png', dpi=300, bbox_inches='tight')
-    clusters.to_csv('../Outcomes/subject_cluster_assignments.tsv', sep='\t', header=True)
+
+    g.savefig('../Outcomes/figure_full_clustermap_clusters.pdf', format='pdf', dpi=450, bbox_inches='tight')
+    #clusters.to_csv('../Outcomes/subject_cluster_assignments.tsv', sep='\t', header=True)
     
     return clusters
 
 def create_individual_dumbbell_plot(subject_id: str,
                                     top_n: int = 10):
     """
-    Creates a dumbbell plot to visualize the before-and-after changes
+    Creates a dumbbell plot to visualise the before-and-after changes
     for a single individual's counterfactual analysis. Only includes top n features by abs change
     """
 
@@ -290,7 +238,7 @@ def create_individual_dumbbell_plot(subject_id: str,
     wlz_delta = wlz_cf - wlz_base
     title = (
         f'Counterfactual Changes for {subject_id}\n'
-        f'WLZ Score: {wlz_base:.2f} → {wlz_cf:.2f} (Δ {wlz_delta:+.2f})'
+        f'WLZ Score: {wlz_base:.2f} → {wlz_cf:.2f} (Delta {wlz_delta:+.2f})'
     )
     ax.set_title(title, fontsize=16, fontweight='bold', pad=20)
     
@@ -299,12 +247,9 @@ def create_individual_dumbbell_plot(subject_id: str,
     
     fig.savefig(f'../Outcomes/dumbbell_plot_{subject_id}_1.png', dpi=300, bbox_inches='tight')
 
-def plot_aa_violins_by_cluster(
-    aa_file_path: str = '../data/aa.tsv',
-    outcomes_dir: str = '../Outcomes'
-):
+def plot_aa_violins_by_cluster(aa_file_path: str = '../data/aa.tsv', outcomes_dir: str = '../Outcomes'):
     """
-    Plots violin plots of AA levels (Tyrosine, Methionine, Aspartic acid, Taurine)
+    Plots violin plots of some AA levels (Tyrosine, Methionine, Aspartic acid, Taurine)
     for individuals in each cluster (from pop cluster fig), separately for timepoints 0 and 52.
     """
     plt.style.use('seaborn-v0_8-whitegrid')
@@ -386,7 +331,6 @@ if __name__ == "__main__":
     ##remove x0 and x_cf columns
     #intervention_data = intervention_data[['subjectID', 'feature', 'delta']]
     create_population_fig(intervention_data)
-    # create_individual_heatmap(intervention_data, top_n_features=10)
     # create_radar_plot(intervention_data, top_n_features=10)
     # create_full_clustermap(intervention_data, top_n_features=10)
     # create_individual_dumbbell_plot(subject_id='LCC1010')
@@ -395,48 +339,3 @@ if __name__ == "__main__":
     #     aa_file_path='../data/aa.tsv',
     #     outcomes_dir='../Outcomes'
     # )
-
-    # plt.style.use('seaborn-v0_8-whitegrid')
-
-    # assign_path = 'subject_cluster_assignments.tsv'
-    # cl_df = pd.read_csv(assign_path, sep='\t')
-    # # Set index to subjectID (first column), use 'cluster_id' column as values
-    # cl_df = cl_df.set_index(['subjectID'])
-    # aa = pd.read_csv('../data/surveillance.tsv', sep='\t')
-    # desired_aas = ['subjectID','fever', 'cough', 'diarrhoea', 'antibiotic']
-    # aa = aa[desired_aas]
-    # aa = aa.join(cl_df, on='subjectID', how='inner')
-    # aa = aa.set_index(aa.columns[0])
-
-
-    # fig, axes = plt.subplots(1, 4, figsize=(30, 15))
-    # axes = axes.flatten()
-    # clusters = sorted(cl_df['cluster_id'].unique())
-    # pairs = []
-    # for i in range(len(clusters)):
-    #     for j in range(i + 1, len(clusters)):
-    #         pairs.append((clusters[i], clusters[j]))
-
-    # for i, aa_name in enumerate(['fever', 'cough', 'diarrhoea', 'antibiotic']):
-    #     ax = axes[i]
-    #     sns.boxplot(
-    #         x='cluster_id',
-    #         y=aa_name,
-    #         data=aa,
-    #         palette='Set2',
-    #         ax=ax,
-    #     )
-
-    #     annot = Annotator(ax, pairs, data=aa, x='cluster_id', y=aa_name)
-    #     annot.configure(test='Mann-Whitney', text_format='star', loc='inside', verbose=0, comparisons_correction='Benjamini-Hochberg')
-    #     annot.apply_and_annotate()
-
-    #     ax.set_title(f'{aa_name.replace("_", " ").title()} Levels by Cluster', fontsize=14)
-    #     ax.set_xlabel('Cluster', fontsize=12)
-    #     ax.set_ylabel(f'{aa_name.replace("_", " ").title()} Level', fontsize=12)
-
-    # plt.tight_layout()
-    # out_path = os.path.join('../Outcomes', f'surv_box_timepoint_.png')
-    # plt.savefig(out_path, dpi=300)
-    # plt.close()
-    # print(f'Saved violin plots to {out_path}')

@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+# run this after outcome_heads_nobrain.py to do what-if scenarios. Contains diff functions for diff types of what-if analyses
+# generate_population_optimization_results is most useful function
+# commented out in main is the use of some of the other functions
 import torch
 import pandas as pd
 import numpy as np
@@ -214,8 +216,8 @@ def input_sensitivity_directional(df: pd.DataFrame, top_k=20) -> pd.Series:
     return pd.Series(grad[idx], index=df.columns[idx])
 
 def diagnose_intervention(base_df: pd.DataFrame, set_: dict | None = None, add: dict | None = None):
-    '''Applies an intervention and reports (via print statement):
-    - Top 10 latent dimensions changed (mean |Δz|)
+    '''Applies an intervention and prints:
+    - Top 10 latent dimensions changed (mean |deltaz|)
     - Mean WLZ change (orig units)
     Intervention can be 'set_' and/or 'add'  as in either add to a feature or set as a value. Can be multiple of either.
     Returns the intervened DataFrame.
@@ -237,7 +239,7 @@ def diagnose_intervention(base_df: pd.DataFrame, set_: dict | None = None, add: 
     # change in WLZ from prediction based on og features to prediction based on intervened features
     wlz_delta = float((preds1['WLZ_WHZ_52'] - preds0['WLZ_WHZ_52']).mean())
 
-    print("Top latent |Δz| dims:", list(zip(top.tolist(), dz[top].round(4).tolist())))
+    print("Top latent |Delta z| dims:", list(zip(top.tolist(), dz[top].round(4).tolist())))
     print("WLZ mean delta:", wlz_delta)
     return df_int
 
@@ -569,7 +571,7 @@ if __name__ == '__main__':
     #         wlz_cf_orig = cf['wlz_cf']
     #         wlz_delta_orig = cf['wlz_delta']
 
-    # print(f"\nCounterfactual for {ix}: WLZ {wlz_base_orig:.3f} -> {wlz_cf_orig:.3f} (Δ {wlz_delta_orig:.3f}) [original units]")
+    # print(f"\nCounterfactual for {ix}: WLZ {wlz_base_orig:.3f} to {wlz_cf_orig:.3f} (Delta {wlz_delta_orig:.3f}) [original units]")
     # print("Top changed inputs (scaled units):")
     # print(cf['changes'].head(15))
 

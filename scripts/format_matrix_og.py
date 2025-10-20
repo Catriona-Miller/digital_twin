@@ -51,7 +51,7 @@ lipids_data = lipids_data[lipids_data['sampleID'].str.endswith('_0')].copy()
 lipids_data['subjectID'] = lipids_data['sampleID'].str.replace('_0', '', regex=False)
 lipids_data.drop(columns=['sampleID'], inplace=True)
 
-# same with pcd data
+# same with psd data
 psd_data = psd_data[psd_data['sampleID'].str.endswith('_0')].copy()
 psd_data['subjectID'] = psd_data['sampleID'].str.replace('_0', '', regex=False)
 psd_data.drop(columns=['sampleID'], inplace=True)

@@ -1,6 +1,6 @@
 feature	required_change_original_units
-4-pyridoxic_acid	1.1192543763879577
-Bedtime_difficulty	0.8270922448580356
+4-pyridoxic_acid	32.43165146124628
+Bedtime_difficulty	0.7782548524412534
 Chair_No	-0.24405516703333335
 Chair_Yes	-0.6287616742857143
 Cooking_gas_No	0.6534283171492068
@@ -9,7 +9,7 @@ Household_food_availability_Deficit in whole year	0.2941477220321459
 Household_food_availability_Neither deficit nor surplus	0.5543994026753947
 Household_food_availability_Sometimes deficit	0.8627614759689881
 Household_food_availability_Surplus	-0.392868279923077
-Night_sleep	0.9181921888683628
+Night_sleep	76.34107320794193
 Open_drain_beside_house_No	1.1105959425678424
 Open_drain_beside_house_Yes	0.6353848876151172
 Principal_roofing_material_Finished roof (concrete)	0.9045791515936343
@@ -41,9 +41,9 @@ isoleucine	25.11309765123797
 leucine	42.16143764234111
 lysine	50.42608916892537
 methionine	9.057278979927064
-nicotinamide	0.8525282234229845
+nicotinamide	199.73953943424002
 ornithine	20.632901500585294
-pantothenic_acid	1.4855291312014045
+pantothenic_acid	154.5209496607314
 pc1	-19.752032124186055
 pc10	-2.172875179092909
 pc2	7.247106783129519
@@ -56,7 +56,7 @@ pc8	3.253690869732261
 pc9	2.667927947013374
 phenylalanine	30.087959054346424
 proline	94.4618373698637
-riboflavin	125.04275282863475
+riboflavin	26.07281860502399
 right_hand_before_eating	0.2411849981953193
 right_hand_before_feeding_child	0.8690970648963136
 serine	32.66552904074456
@@ -65,7 +65,7 @@ soap_before_eating	-0.4214148013888889
 soap_before_feeding_child	1.2074666539788739
 taurine	-16.03264024462422
 threonine	32.34363268331119
-tmao	108.17301321789756
+tmao	3.5448562160120103
 trytophan	24.07770682944865
 tyrosine	32.00392414352459
 valine	57.71342162944343

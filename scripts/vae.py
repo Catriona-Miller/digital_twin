@@ -12,7 +12,7 @@ pl.seed_everything(10)
 save = False
 
 # Load the data
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
 # get just the mam kids
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 df_scaled = df_scaled[df_scaled.index.isin(meta_data[meta_data['Condition'] == 'MAM']['subjectID'])]
@@ -116,4 +116,4 @@ if __name__ == "__main__":
         x_rec, _, _ = model(x_sample)
         print("Reconstruction MSE:", nn.functional.mse_loss(x_rec, x_sample).item())
     if save:
-        torch.save(model.state_dict(), "vae_world_large_mam_nolip.pt")
+        torch.save(model.state_dict(), "vae_world_large_mam_nolip_psd.pt")
