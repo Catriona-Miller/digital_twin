@@ -1,3 +1,5 @@
+#pca of microbiome data and save pcs along with alpha diversity
+
 import pandas as pd
 import numpy as np
 from sklearn.decomposition import PCA
@@ -25,10 +27,6 @@ def combine_df(df):
 microbiome_data = combine_df(microbiome_data)
 diversity = diversity.drop(columns=['observed'])
 diversity = combine_df(diversity)
-
-# drop microbiome features from _52 timepoint
-microbiome_data = microbiome_data[[col for col in microbiome_data.columns if not col.endswith('_52')]]
-diversity = diversity[[col for col in diversity.columns if not col.endswith('_52')]]
 
 imp = SimpleImputer(strategy='median')
 microbiome_data.iloc[:, 1:] = imp.fit_transform(microbiome_data.iloc[:, 1:])
@@ -58,7 +56,7 @@ pcs_df = pcs_df.set_index('subjectID')
 
 # combine the columns of pcs_df with diversity based on sampleID
 combined_df = pd.merge(pcs_df, diversity, left_index=True, right_index=True, how='outer')
-combined_df.to_csv('../data/microbiome_pcs_only0.tsv', sep='\t', index=True)
+combined_df.to_csv('../data/microbiome_pcs.tsv', sep='\t', index=True)
 
 
 #get makeup of pcs
@@ -68,4 +66,4 @@ loadings = pd.DataFrame(
     columns=feature_names,
     index=[f'pc{i+1}' for i in range(10)]
 )
-loadings.to_csv('../data/pc_contributions_only0.tsv', sep='\t')
+loadings.to_csv('../data/pc_contributions.tsv', sep='\t')

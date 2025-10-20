@@ -1,2 +1,16 @@
 scripts/lightning_logs/*
-models/mam_qnet.pkl
+qbiome
+quasinet
+data
+scripts/format_data.py
+scripts/format_matrix_52.py
+scripts/outcome_heads.py
+scripts/outcome_heads_train_freeze.py
+scripts/outcome_heads_train_reg.py
+scripts/test.py
+scripts/train_rf.py
+scripts/what_if_all.py
+scripts/whatif.py
+scripts/whatif_vae.py
+Outcomes
+models/vae_heads_reg_*

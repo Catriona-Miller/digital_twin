@@ -31,7 +31,7 @@ editable_cols = [c for c in editable_cols if not (c.endswith('_0') or c.endswith
 
 # Load VAE + Heads
 vae = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM).to(DEVICE)
-vae.load_state_dict(torch.load('vae_world_large_mam_nolip_psd_mse.pt', map_location=DEVICE))
+vae.load_state_dict(torch.load('models/vae_world_large_mam_nolip_psd_mse.pt', map_location=DEVICE))
 vae.eval()
 
 heads = VAEWithHeads(vae).to(DEVICE)

@@ -116,4 +116,4 @@ if __name__ == "__main__":
         x_rec, _, _ = model(x_sample)
         print("Reconstruction MSE:", nn.functional.mse_loss(x_rec, x_sample).item())
     if save:
-        torch.save(model.state_dict(), "vae_world_large_mam_nolip_psd.pt")
+        torch.save(model.state_dict(), "models/vae_world_large_mam_nolip_psd.pt")
