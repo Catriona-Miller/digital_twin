@@ -5,11 +5,14 @@ import numpy as np
 import torch
 import joblib
 import os
+import matplotlib.pyplot as plt
+from scipy.stats import ttest_ind, chi2_contingency
+from statsmodels.stats.multitest import multipletests
 
 from what_if_counterfactuals import predict_df
 
-save_recipe = False
-save_aa_ranges = False
+save_recipe = True
+save_aa_ranges = True
 
 selected_features = [
     'leucine', 'pc6', 'pc2', 'tyrosine', 'isoleucine',
@@ -19,17 +22,17 @@ restrict_to_selected_features = False
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-intervention_data = pd.read_csv('../Outcomes/population_wlz_deltas_neg1.tsv', sep='\t')
-clusters = pd.read_csv('../Outcomes/subject_cluster_assignments.tsv', sep='\t')
+intervention_data = pd.read_csv('../Outcomes/population_wlz_deltas_neg1_small.tsv', sep='\t')
+clusters = pd.read_csv('../Outcomes/subject_cluster_assignments_small.tsv', sep='\t')
 
-output_dir = '../Outcomes/cluster_interventions_original_units'
+output_dir = '../Outcomes/cluster_interventions_original_units_small'
 os.makedirs(output_dir, exist_ok=True)
 
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_small.tsv', sep='\t', index_col=0)
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 mam_ids = meta_data[meta_data['Condition'] == 'MAM']['subjectID']
 df_scaled = df_scaled.loc[df_scaled.index.intersection(mam_ids)]
-ckpt = torch.load('../models/vae_heads_nolip_psd_mse.pt', map_location=DEVICE)
+ckpt = torch.load('../models/vae_heads_small.pt', map_location=DEVICE)
 target_scaler = ckpt.get('target_scaler', None)
 regression_cols = ckpt.get('regression_cols', ['cognitive_score_52', 'vocalisation_52', 'WLZ_WHZ_52'])
 
@@ -45,8 +48,8 @@ intervention_profiles = intervention_data.pivot_table(
 
 ## Set up for scaling the amount of change req
 # Load the scaler and original data to get scaling parameters for continuous features
-SCALER_PATH = '../data/scaler_large_nolip_psd.save'
-COMBINED_MATRIX_PATH = '../data/combined_matrix_large.tsv'
+SCALER_PATH = '../data/scaler_small.save'
+COMBINED_MATRIX_PATH = '../data/combined_matrix_small.tsv'
 
 scaler = joblib.load(SCALER_PATH)
 combined_df = pd.read_csv(COMBINED_MATRIX_PATH, sep='\t')
@@ -120,7 +123,7 @@ for cluster_num, cluster_df in grouped_profiles:
 # Combine the list of series into a final df
 archetype_interventions = pd.DataFrame(archetype_interventions_list)
 
-print("four cluster types:")
+print("two cluster types:")
 print(archetype_interventions)
 
 
@@ -242,8 +245,18 @@ _, preds_below_int = predict_df(df_below_int)
 num_recovered = (preds_below_int['WLZ_WHZ_52'] >= thresh).sum()
 
 recovered_in_preds = preds_below_int.loc[preds_below_int.index.intersection(unrecovered_ids)]
-num_recovered_would_have = (recovered_in_preds['WLZ_WHZ_52'] >= thresh).sum()
+recovered_would_have = (recovered_in_preds['WLZ_WHZ_52'] >= thresh)
+num_recovered_would_have = recovered_would_have.sum()
 print(f"{num_recovered_would_have} of {len(unrecovered_ids)} ({num_recovered_would_have/len(unrecovered_ids)*100:.2f}%) unrecovered individuals recovered with the intervention change.")
+
+# add cluster numbers to recovered_would_have
+recovered_would_have = recovered_would_have.to_frame()
+recovered_would_have = recovered_would_have.join(clusters.set_index('subjectID'), how='inner')
+print("Recovery by cluster:")
+for cluster_num, group in recovered_would_have.groupby('cluster_id'):
+    num_in_cluster = (clusters['cluster_id'] == cluster_num).sum()
+    num_recovered_in_cluster = group['WLZ_WHZ_52'].sum()
+    print(f"Cluster {cluster_num}: {num_recovered_in_cluster} of {num_in_cluster} ({(num_recovered_in_cluster/num_in_cluster*100 if num_in_cluster else 0):.2f}%) unrecovered individuals recovered with the intervention change.")
 
 # for the clusters, save a tsv file with the amino acid ranges for each cluster
 aa_data = pd.read_csv('../data/aa.tsv', sep='\t')
@@ -264,3 +277,92 @@ for cluster_num, cluster_df in aa_data.groupby('cluster_id'):
     file_path = os.path.join(output_dir, f'cluster_{cluster_num}_amino_acid_ranges.tsv')
     if save_aa_ranges:
         aa_ranges_df.to_csv(file_path, sep='\t', index=True)
+
+# find the average prses in each of the two clusters
+prs = pd.read_csv('../data/genetics.tsv', sep='\t')
+prs = prs.set_index('subjectID')
+
+prs_cols = [c for c in prs.columns if c != 'EF_PRS']
+
+# Join cluster assignments and drop subjects without cluster
+prs_clusters = prs.join(clusters.set_index('subjectID'), how='inner')
+prs_clusters = prs_clusters.dropna(subset=['cluster_id'])
+prs_clusters['cluster_id'] = prs_clusters['cluster_id'].astype(int)
+
+# z-score each PRS across all individuals (columns)
+prs_z = prs_clusters[prs_cols].apply(lambda x: (x - x.mean()) / x.std(ddof=0), axis=0)
+prs_z['cluster_id'] = prs_clusters['cluster_id']
+
+cluster_ids = sorted(prs_z['cluster_id'].unique())
+
+c1, c2 = cluster_ids[:2]
+
+# Group means (z-scaled) for the two clusters
+means = prs_z.groupby('cluster_id')[prs_cols].mean()
+
+# Radar plot setup
+labels = prs_cols
+N = len(labels)
+angles = np.linspace(0, 2 * np.pi, N, endpoint=False).tolist()
+angles += angles[:1]  # close the loop
+
+fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True))
+
+ax.set_theta_offset(np.pi / 2)
+ax.set_theta_direction(-1)
+
+for cid, color in zip([c1, c2], ['C0', 'C1']):
+    vals = means.loc[cid, labels].tolist()
+    vals += vals[:1]
+    ax.plot(angles, vals, color=color, linewidth=2, label=f'Cluster {cid}')
+    ax.fill(angles, vals, color=color, alpha=0.25)
+
+ax.set_thetagrids(np.degrees(angles[:-1]), labels)
+ax.set_title('Average z-scored PRS by cluster', y=1.08)
+ax.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1))
+plt.tight_layout()
+
+outpath = os.path.join('../Outcomes/prs_radar_clusters.pdf')
+fig.savefig(outpath, format='pdf', bbox_inches='tight', dpi=400)
+
+# Print per-PRS p-values (two-sided t-test, unequal variance)
+print("PRS difference p-values (two-sided Welch t-test):")
+g1 = prs_z[prs_z['cluster_id'] == c1]
+g2 = prs_z[prs_z['cluster_id'] == c2]
+pvals = []
+cols_list = []
+for col in labels:
+    stat, p = ttest_ind(g1[col].dropna(), g2[col].dropna(), equal_var=False)
+    pvals.append(p)
+    cols_list.append(col)
+    print(f"{col}: p={p:.4g}")
+
+reject, pvals_corrected, _, _ = multipletests(pvals, alpha=0.05, method='fdr_bh')
+print("\nBenjamini-Hochberg FDR correction (alpha=0.05):")
+for col, p_unc, p_corr, rej in zip(cols_list, pvals, pvals_corrected, reject):
+    print(f"{col}: p_unc={p_unc:.4g}, p_bh={p_corr:.4g}, significant={bool(rej)}")
+
+# determine if any statisticaly significant differences in metadata between clusters
+meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
+meta_data = meta_data.set_index('subjectID')
+meta_clusters = meta_data.join(clusters.set_index('subjectID'), how='inner')
+meta_clusters = meta_clusters.dropna(subset=['cluster_id'])
+meta_clusters['cluster_id'] = meta_clusters['cluster_id'].astype(int)
+
+# compare Sex, Ethnicity, Feed, Delivery_Mode, Supplementation, and PoB between clusters. All categorical so chi-sq test. 
+categorical_cols = ['Sex', 'Ethnicity', 'Feed', 'Delivery_Mode', 'Supplementation', 'PoB']
+pvals = []
+for col in categorical_cols:
+    contingency_table = pd.crosstab(meta_clusters['cluster_id'], meta_clusters[col])
+    stat, p, dof, expected = chi2_contingency(contingency_table)
+    pvals.append(p)
+# adjust p-values for multiple testing
+reject, pvals_corrected, _, _ = multipletests(pvals, alpha=0.05, method='fdr_bh')
+# save tsv file with results
+cat_results = pd.DataFrame({
+    'feature': categorical_cols,
+    'p_uncorrected': pvals,
+    'p_bh_corrected': pvals_corrected,
+    'significant': reject
+})
+cat_results.to_csv(os.path.join(output_dir, 'cluster_metadata_categorical_comparisons.tsv'), sep='\t', index=False)

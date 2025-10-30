@@ -12,16 +12,16 @@ from sklearn.utils.class_weight import compute_class_weight
 import numpy as np
 from datetime import datetime
 
-save = False
+save = True
 
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_small.tsv', sep='\t', index_col=0)
 wolkes_data = pd.read_csv('../data/wolkes.tsv', sep='\t')
 bayley_data = pd.read_csv('../data/bayley.tsv', sep='\t')
 anthro_data = pd.read_csv('../data/anthro.tsv', sep='\t')
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 # get just the mam kids
 df_scaled = df_scaled[df_scaled.index.isin(meta_data[meta_data['Condition'] == 'MAM']['subjectID'])]
-scaler = joblib.load('../data/scaler_large_nolip_psd.save')
+scaler = joblib.load('../data/scaler_small.save')
 X = torch.tensor(df_scaled.values, dtype=torch.float32)    
 INPUT_DIM   = X.shape[1]
 LATENT_DIM  = 64
@@ -142,7 +142,7 @@ def combine_df(df):
 
 
 if __name__ == "__main__":
-    df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
+    df_scaled = pd.read_csv('../data/combined_imputed_scaled_small.tsv', sep='\t', index_col=0)
     wolkes_data = pd.read_csv('../data/wolkes.tsv', sep='\t')
     bayley_data = pd.read_csv('../data/bayley.tsv', sep='\t')
     anthro_data = pd.read_csv('../data/anthro.tsv', sep='\t')
@@ -212,13 +212,13 @@ if __name__ == "__main__":
     val_loader   = make_loader(X_val,   y_val,   shuffle=False)
     test_loader  = make_loader(X_test,  y_test,  shuffle=False)
 
-    scaler = joblib.load('../data/scaler_large_nolip_psd.save')
+    scaler = joblib.load('../data/scaler_small.save')
     X = torch.tensor(df_scaled.values, dtype=torch.float32)    
     INPUT_DIM   = X.shape[1]
     LATENT_DIM  = 64
     HIDDEN_DIM  = 1024
     model = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM)
-    model.load_state_dict(torch.load('vae_world_large_mam_nolip_psd_mse.pt', map_location='cpu'))
+    model.load_state_dict(torch.load('../models/vae_world_small.pt', map_location='cpu'))
     #model.eval()
 
     model_heads = VAEWithHeads(model)
@@ -292,4 +292,4 @@ if __name__ == "__main__":
             'input_dim': INPUT_DIM,
             'latent_dim': LATENT_DIM,
             'hidden_dim': HIDDEN_DIM,
-        }, '../models/vae_heads_nolip_psd_mse.pt')
+        }, '../models/vae_heads_small.pt')

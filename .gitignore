@@ -13,4 +13,4 @@ scripts/what_if_all.py
 scripts/whatif.py
 scripts/whatif_vae.py
 Outcomes
-models/vae_heads_reg_*
+all_models

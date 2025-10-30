@@ -9,10 +9,10 @@ from sklearn.preprocessing import StandardScaler
 from torch import nn, save
 from torch.utils.data import TensorDataset, DataLoader
 pl.seed_everything(10)
-save = False
+save = True
 
 # Load the data
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_small.tsv', sep='\t', index_col=0)
 # get just the mam kids
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 df_scaled = df_scaled[df_scaled.index.isin(meta_data[meta_data['Condition'] == 'MAM']['subjectID'])]
@@ -113,7 +113,10 @@ if __name__ == "__main__":
     model.eval()
     with torch.no_grad():
         x_sample = X[:8]
-        x_rec, _, _ = model(x_sample)
-        print("Reconstruction MSE:", nn.functional.mse_loss(x_rec, x_sample).item())
+        x_rec, mu, logvar = model(x_sample)
+        recon_mse = nn.functional.mse_loss(x_rec, x_sample).item()
+        kl = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp(), dim=1).mean().item()
+        print("Reconstruction MSE:", recon_mse)
+        print("KL Divergence:", kl)
     if save:
-        torch.save(model.state_dict(), "models/vae_world_large_mam_nolip_psd.pt")
+        torch.save(model.state_dict(), "../models/vae_world_small.pt")

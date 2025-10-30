@@ -1,5 +1,5 @@
 # This script formats the input data for the VAE model by imputing missing values and scaling the features. Different datasets combined.
-
+# reads in all data but only keeps non-behavioural related data for the digital twin model (see all_data list on line 140)
 import pandas as pd
 from sklearn.experimental import enable_iterative_imputer  # Needed to enable IterativeImputer (even though not called)
 from sklearn.impute import IterativeImputer, SimpleImputer
@@ -136,11 +136,11 @@ sanitation_data.drop(columns=['agent_used_before_feeding_child', 'method_used_be
 
 sleep_data = sleep_data[['subjectID', 'Bedtime_difficulty', 'Night_sleep']]
 
-# combine all dataframes on subjectID. Add or remove from this below e.g. lipids and psd
+# combine all dataframes on subjectID. Removed all behavioural related ones
 all_data = [
     PRS_data, aa_data, microbiome_data, economic_features, head_data, meta_features, education_features,
-    family_features, surveillance_features, anthro_data, fcis_data, glitter_data, household_data, 
-    pss_data, sanitation_data, sleep_data, vitamin_data, wolkes_data, bayley_data]
+    family_features, surveillance_features, anthro_data, household_data, 
+    sanitation_data, vitamin_data]
 
 all_subjects = meta_data['subjectID'].unique().tolist()
 # create a new dataframe with all subjectIDs
@@ -149,7 +149,7 @@ combined_df = pd.DataFrame({'subjectID': list(all_subjects)})
 for df in all_data:
     combined_df = pd.merge(combined_df, df, on='subjectID', how='outer')
 
-combined_df.to_csv('../data/combined_matrix_large.tsv', sep='\t', index=False)
+combined_df.to_csv('../data/combined_matrix_small.tsv', sep='\t', index=False)
 
 dummy_cols = [
     col for col in combined_df.columns
@@ -188,11 +188,11 @@ def impute_and_scale_df(df, categorical_cols=None):
 combined_imputed_scaled, fitted_scaler = impute_and_scale_df(combined_df.set_index('subjectID'), categorical_cols=categorical_cols)
 
 # save both
-#combined_imputed_scaled.to_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index=True)
-#joblib.dump(fitted_scaler, '../data/scaler_large_nolip_psd.save')
+combined_imputed_scaled.to_csv('../data/combined_imputed_scaled_small.tsv', sep='\t', index=True)
+joblib.dump(fitted_scaler, '../data/scaler_small.save')
 
 # also save a file with just the editable ones for what if scenarios
-# editable_sources = [household_data, sanitation_data, microbiome_data, aa_data, vitamin_data]
-# editable_cols = [col for df in editable_sources for col in df.columns if col != 'subjectID']
+editable_sources = [household_data, sanitation_data, microbiome_data, aa_data, vitamin_data]
+editable_cols = [col for df in editable_sources for col in df.columns if col != 'subjectID']
 
-# combined_imputed_scaled[editable_cols].to_csv('../data/combined_imputed_scaled_large_nolip_sleep_editable.tsv', sep='\t', index=True)
+combined_imputed_scaled[editable_cols].to_csv('../data/combined_imputed_scaled_small_editable.tsv', sep='\t', index=True)

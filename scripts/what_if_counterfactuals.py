@@ -16,14 +16,14 @@ BATCH_SIZE  = 512
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load inputs
-df_scaled = pd.read_csv('../data/combined_imputed_scaled_large_nolip_psd.tsv', sep='\t', index_col=0)
+df_scaled = pd.read_csv('../data/combined_imputed_scaled_small.tsv', sep='\t', index_col=0)
 meta_data = pd.read_csv('../data/meta.tsv', sep='\t')
 mam_ids = meta_data[meta_data['Condition'] == 'MAM']['subjectID']
 df_scaled = df_scaled.loc[df_scaled.index.intersection(mam_ids)]
 
 INPUT_DIM = df_scaled.shape[1]
 
-editable_cols = pd.read_csv('../data/combined_imputed_scaled_large_nolip_editable.tsv', sep='\t', index_col=0).columns.tolist()
+editable_cols = pd.read_csv('../data/combined_imputed_scaled_small_editable.tsv', sep='\t', index_col=0).columns.tolist()
 # remove Members_in_household, Number of rooms in household
 editable_cols = [c for c in editable_cols if c != 'Members_in_household' and c != 'Number_of_rooms_in_current_household']
 # remove microbiome diversity scores (anything that ends in 0 or 52) from editable columns
@@ -31,11 +31,11 @@ editable_cols = [c for c in editable_cols if not (c.endswith('_0') or c.endswith
 
 # Load VAE + Heads
 vae = VAEWorld(INPUT_DIM, LATENT_DIM, HIDDEN_DIM).to(DEVICE)
-vae.load_state_dict(torch.load('models/vae_world_large_mam_nolip_psd_mse.pt', map_location=DEVICE))
+vae.load_state_dict(torch.load('../models/vae_world_small.pt', map_location=DEVICE))
 vae.eval()
 
 heads = VAEWithHeads(vae).to(DEVICE)
-ckpt = torch.load('../models/vae_heads_nolip_psd_mse.pt', map_location=DEVICE)
+ckpt = torch.load('../models/vae_heads_small.pt', map_location=DEVICE)
 state = ckpt.get('state_dict', ckpt)
 missing, unexpected = heads.load_state_dict(state, strict=False)
 print("Heads load_state_dict missing keys:", missing)
@@ -440,8 +440,8 @@ def run_single_subject_cf(subject_id: str, target_wlz_gain: float = 1.0):
     }
 
 def unscale_intervention_data(intervention_data: pd.DataFrame,
-                              combined_matrix_path: str = '../data/combined_matrix_large.tsv',
-                              scaler_path: str = '../data/scaler_large_nolip_psd.save') -> pd.DataFrame:
+                              combined_matrix_path: str = '../data/combined_matrix_small.tsv',
+                              scaler_path: str = '../data/scaler_small.save') -> pd.DataFrame:
     """
     Convert x0/x_cf/delta from scaled units back to original units for non-categorical features.
     Categorical are left unchanged.
@@ -584,7 +584,7 @@ if __name__ == '__main__':
     )
     # for outputting intervention_data, want only feature, delta, subjectID for make_figs.py input
     intervention_data_out = intervention_data[['feature', 'delta', 'subjectID']]
-    #intervention_data_out.to_csv('../Outcomes/population_wlz_deltas_neg1.tsv', sep='\t', header=True)
+    intervention_data_out.to_csv('../Outcomes/population_wlz_deltas_neg1_small.tsv', sep='\t', header=True)
     intervention_data_orig = unscale_intervention_data(intervention_data)
     #intervention_data_orig.to_csv('../Outcomes/test_input_original_units.tsv', sep='\t', index=False)
 

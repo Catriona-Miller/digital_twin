@@ -62,7 +62,7 @@ def create_population_fig(intervention_data):
     handles, labels = ax.get_legend_handles_labels()
 
     plt.tight_layout()
-    fig.savefig('../Outcomes/figure_combined_neg1.pdf', format='pdf', dpi=450, bbox_inches='tight')
+    fig.savefig('../Outcomes/figure_combined_neg1_small.pdf', format='pdf', dpi=450, bbox_inches='tight')
 
 def create_radar_plot(intervention_data: pd.DataFrame, top_n_features: int = 8):
     """
@@ -154,10 +154,10 @@ def create_full_clustermap(intervention_data: pd.DataFrame, top_n_features: int 
     g.ax_heatmap.set_ylabel('') 
     
     plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90)
-    g.savefig('../Outcomes/figure_full_clustermap_neg1.svg', format='svg', dpi=450, bbox_inches='tight')
+    g.savefig('../Outcomes/figure_full_clustermap_neg1_small.svg', format='svg', dpi=450, bbox_inches='tight')
 
 
-def create_full_clustermap_clusters(intervention_data: pd.DataFrame, top_n_features: int = 10, n_clusters: int = 4):
+def create_full_clustermap_clusters(intervention_data: pd.DataFrame, top_n_features: int = 10, n_clusters: int = 2):
     """
     Same as above, just outputs the cluster assignments (four clusters) to tsv and adds colour on side
     Should just combine both functions and make tsv output optional but haven't yet...
@@ -202,8 +202,8 @@ def create_full_clustermap_clusters(intervention_data: pd.DataFrame, top_n_featu
     g.ax_heatmap.set_ylabel('')
     plt.setp(g.ax_heatmap.get_xticklabels(), rotation=90)
 
-    g.savefig('../Outcomes/figure_full_clustermap_clusters.pdf', format='pdf', dpi=450, bbox_inches='tight')
-    #clusters.to_csv('../Outcomes/subject_cluster_assignments.tsv', sep='\t', header=True)
+    g.savefig('../Outcomes/figure_full_clustermap_clusters_small.pdf', format='pdf', dpi=450, bbox_inches='tight')
+    clusters.to_csv('../Outcomes/subject_cluster_assignments_small.tsv', sep='\t', header=True)
     
     return clusters
 
@@ -327,14 +327,14 @@ def plot_aa_violins_by_cluster(aa_file_path: str = '../data/aa.tsv', outcomes_di
     plot_violins(aa_diff, timepoint='Difference (52-0)')
 
 if __name__ == "__main__":
-    intervention_data = pd.read_csv('../Outcomes/population_wlz_deltas_neg1.tsv', sep='\t')
+    intervention_data = pd.read_csv('../Outcomes/population_wlz_deltas_neg1_small.tsv', sep='\t')
     ##remove x0 and x_cf columns
     #intervention_data = intervention_data[['subjectID', 'feature', 'delta']]
     create_population_fig(intervention_data)
     # create_radar_plot(intervention_data, top_n_features=10)
-    # create_full_clustermap(intervention_data, top_n_features=10)
+    create_full_clustermap(intervention_data, top_n_features=10)
     # create_individual_dumbbell_plot(subject_id='LCC1010')
-    create_full_clustermap_clusters(intervention_data, top_n_features=10, n_clusters=4)
+    create_full_clustermap_clusters(intervention_data, top_n_features=10, n_clusters=2)
     # plot_aa_violins_by_cluster(
     #     aa_file_path='../data/aa.tsv',
     #     outcomes_dir='../Outcomes'
