@@ -255,16 +255,16 @@ def plot_aa_violins_by_cluster(aa_file_path: str = '../data/aa.tsv', outcomes_di
     plt.style.use('seaborn-v0_8-whitegrid')
 
     # get cluster assignments
-    assign_path = 'subject_cluster_assignments.tsv'
+    assign_path = '../Outcomes/subject_cluster_assignments_small.tsv'
     cl_df = pd.read_csv(assign_path, sep='\t')
     cl_df = cl_df.set_index(['subjectID'])
 
     aa = pd.read_csv(aa_file_path, sep='\t')
     aa = aa.set_index(aa.columns[0])
 
-    # These are ones we are interested in as diff between clusters
-    desired_aas = ['tyrosine', 'methionine', 'aspartic_acid', 'taurine']
-    aa = aa[desired_aas]
+    # get essential and non-essential aas
+    essential_aas = ['arginine', 'histidine', 'isoleucine', 'leucine', 'lysine', 'methionine', 'phenylalanine', 'taurine', 'threonine', 'trytophan', 'valine']
+    non_essential_aas = ['alanine', 'asparagine', 'aspartic_acid', 'citrulline', 'glutamic_acid', 'glutamine', 'glycine', 'hydroxyproline', 'proline', 'serine', 'tyrosine']
 
     aa_0 = aa[aa.index.str.endswith('_0')].copy()
     aa_52 = aa[aa.index.str.endswith('_52')].copy()
@@ -279,63 +279,61 @@ def plot_aa_violins_by_cluster(aa_file_path: str = '../data/aa.tsv', outcomes_di
     aa_52 = aa_52.join(cl_df, on='subjectID', how='inner')
     aa_52 = aa_52.drop(columns=['subjectID'])
 
-    # Plotting function. Also calcs MWU between all pairs
-    def plot_violins(data: pd.DataFrame, timepoint: int):
-        fig, axes = plt.subplots(1, 4, figsize=(30, 15))
-        axes = axes.flatten()
-        clusters = sorted(cl_df['cluster_id'].unique())
-        pairs = []
-        for i in range(len(clusters)):
-            for j in range(i + 1, len(clusters)):
-                pairs.append((clusters[i], clusters[j]))
+    # get the ratio of essential to non-essential aas for both timepoints
+    aa_0['ess_noness_ratio'] = aa_0[essential_aas].sum(axis=1) / aa_0[non_essential_aas].sum(axis=1)
+    aa_52['ess_noness_ratio'] = aa_52[essential_aas].sum(axis=1) / aa_52[non_essential_aas].sum(axis=1)
 
-        for i, aa_name in enumerate(aa.columns):
-            ax = axes[i]
-            sns.boxplot(
-                x='cluster_id',
-                y=aa_name,
-                data=data,
-                palette='Set2',
-                ax=ax,
-            )
-
-            annot = Annotator(ax, pairs, data=data, x='cluster_id', y=aa_name)
-            annot.configure(test='Mann-Whitney', text_format='star', loc='inside', verbose=0, comparisons_correction='Benjamini-Hochberg')
-            annot.apply_and_annotate()
-
-            ax.set_title(f'{aa_name.replace("_", " ").title()} Levels by Cluster (Timepoint {timepoint})', fontsize=14)
-            ax.set_xlabel('Cluster', fontsize=12)
-            ax.set_ylabel(f'{aa_name.replace("_", " ").title()} Level', fontsize=12)
-
+    # Plot the ratios at a given timepoint
+    def plot_violins(data: pd.DataFrame, timepoint: int, pairs: list = [(1, 2)]):
+        plt.figure(figsize=(12, 6))
+        sns.violinplot(x='cluster_id', y='ess_noness_ratio', data=data, palette='Set2')
+        plt.title(f'Essential to Non-Essential AA Ratio by Cluster (Timepoint {timepoint})', fontsize=14)
+        plt.xlabel('Cluster', fontsize=12)
+        plt.ylabel('Essential/Non-Essential Ratio', fontsize=12)
         plt.tight_layout()
-        out_path = os.path.join(outcomes_dir, f'aa_box_timepoint_{timepoint}.png')
-        plt.savefig(out_path, dpi=300)
-        plt.close()
-    
+
+        # add statistical annotations between two clusters
+        annotator = Annotator(plt.gca(), pairs, data=data, x='cluster_id', y='ess_noness_ratio')
+        annotator.configure(test='Mann-Whitney', text_format='star', loc='inside', verbose=0)
+        annotator.apply_and_annotate()
+
+        plt.savefig(os.path.join(outcomes_dir, f'aa_ess_noness_ratio_timepoint_{timepoint}.pdf'), format='pdf', dpi=300, bbox_inches='tight')
+
     # Plot for timepoint 0
     plot_violins(aa_0, timepoint=0)
     # Plot for timepoint 52
     plot_violins(aa_52, timepoint=52)
-    # also plot the difference between the two (52 - 0). Keep cluster_id as is
-    aa_0_aligned = aa_0.copy()
-    aa_52_aligned = aa_52.copy()
-    aa_0_aligned.index = aa_0_aligned.index.str.replace('_0', '', regex=False)
-    aa_52_aligned.index = aa_52_aligned.index.str.replace('_52', '', regex=False)
-    # get log2 difference of all columns except cluster_id
-    aa_diff = np.log2( aa_52_aligned.drop(columns=['cluster_id']) / aa_0_aligned.drop(columns=['cluster_id']) )
-    aa_diff['cluster_id'] = aa_0_aligned['cluster_id']
-    plot_violins(aa_diff, timepoint='Difference (52-0)')
+
+    # Also, the difference between timepoints
+    aa_diff = aa_52[essential_aas + non_essential_aas].reset_index(drop=True) - aa_0[essential_aas + non_essential_aas].reset_index(drop=True)
+    aa_diff['cluster_id'] = aa_52['cluster_id'].values
+    aa_diff['ess_noness_ratio'] = aa_diff[essential_aas].sum(axis=1) / aa_diff[non_essential_aas].sum(axis=1)
+    plot_violins(aa_diff, timepoint='52-0 (difference)')
+
+    # Additionally, plot ratio for just some non-essential AAs
+    non_essential_aas = ['alanine', 'serine', 'ornithine']
+
+    # get the ratio of essential to non-essential aas for both timepoints
+    aa_0['ess_noness_ratio'] = aa_0[essential_aas].sum(axis=1) / aa_0[non_essential_aas].sum(axis=1)
+    aa_52['ess_noness_ratio'] = aa_52[essential_aas].sum(axis=1) / aa_52[non_essential_aas].sum(axis=1)
+
+    plot_violins(aa_0, timepoint='0 (non-essential subset)')
+    plot_violins(aa_52, timepoint='52 (non-essential subset)')
+
+
 
 if __name__ == "__main__":
     intervention_data = pd.read_csv('../Outcomes/population_wlz_deltas_neg1_small.tsv', sep='\t')
     ##remove x0 and x_cf columns
     #intervention_data = intervention_data[['subjectID', 'feature', 'delta']]
-    create_population_fig(intervention_data)
+    #create_population_fig(intervention_data)
     # create_radar_plot(intervention_data, top_n_features=10)
-    create_full_clustermap(intervention_data, top_n_features=10)
+    #create_full_clustermap(intervention_data, top_n_features=10)
     # create_individual_dumbbell_plot(subject_id='LCC1010')
-    create_full_clustermap_clusters(intervention_data, top_n_features=10, n_clusters=2)
-    # plot_aa_violins_by_cluster(
-    #     aa_file_path='../data/aa.tsv',
-    #     outcomes_dir='../Outcomes'
-    # )
+    #create_full_clustermap_clusters(intervention_data, top_n_features=10, n_clusters=2)
+
+    ## Below fn has to be run after cluster_intervention.py, other ones above can be either, either, or :)
+    plot_aa_violins_by_cluster(
+        aa_file_path='../data/aa.tsv',
+        outcomes_dir='../Outcomes'
+    )
