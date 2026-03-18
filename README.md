@@ -1,5 +1,4 @@
-**Digital Twins for Counterfactual Analysis in M4EFAD Study
-Makes up final results section of Optimising recovery from childhood moderate acute malnutrition: a randomized controlled trial**
+**Digital Twins for Counterfactual Analysis in M4EFAD Study**
 
 Scripts contains the code for this analysis.
 1. **save_microbiome.py** was used to do PCA on the microbiome data
